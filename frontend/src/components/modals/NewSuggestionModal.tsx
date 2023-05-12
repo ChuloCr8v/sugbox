@@ -46,6 +46,7 @@ const NewSuggestionModal = (props: Props) => {
         currentUser,
         currentSuggestionView,
         dispatch,
+        id: "",
       });
 
       dispatch(showModal("Suggestion Added Succefully"));

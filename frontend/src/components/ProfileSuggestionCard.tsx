@@ -5,26 +5,22 @@ import {
   FaCommentAlt,
   FaCommentMedical,
   FaEdit,
+  FaEllipsisH,
   FaThumbsDown,
   FaThumbsUp,
   FaTrash,
+  FaUser,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { showEditSuggestionForm } from "../../redux/suggestionSlice";
 import Link from "next/link";
+import Button from "./Button";
 
 interface Props {
   data: {
+    isAnonymous: any;
     user: {
-      _id:
-        | string
-        | number
-        | boolean
-        | readonly string[]
-        | readonly number[]
-        | readonly boolean[]
-        | null
-        | undefined;
+      _id: string;
       firstName: string;
       lastName: string;
     };
@@ -38,7 +34,7 @@ interface Props {
     upVotes: string;
     downVotes: string;
     comments: string;
-    _id: any;
+    _id: string;
   };
 }
 
@@ -46,6 +42,10 @@ interface stateProps {
   user: {
     currentUser: {
       data: {
+        data: {
+          _id: string;
+          isAdmin: boolean;
+        };
         token: string;
       };
     };
@@ -53,7 +53,7 @@ interface stateProps {
 }
 
 function ProfileSuggestionCard(props: Props) {
-  const [editForm, setShowEditForm] = useState(false);
+  const [showCardMenu, setShowCardMenu] = useState(false);
   const [suggester, setSuggester] = useState("");
 
   const { currentUser } = useSelector((state: stateProps) => state.user);
@@ -63,15 +63,86 @@ function ProfileSuggestionCard(props: Props) {
   }, []);
 
   const dispatch = useDispatch();
+  const isAdmin = currentUser && currentUser.data.data.isAdmin;
+  const isCurrentUser =
+    currentUser && currentUser.data.data._id === props.data.user._id;
+
+  const CardMenu = () => {
+    return (
+      <div className=" w-32 bg-white shadow rounded flex flex-col items-start gap-2 p-2">
+        {isCurrentUser && (
+          <button
+            className={
+              "cursor-pointer hover:text-blue-600 hover:bg-blue-100 px-2 duration-300 w-full text-left rounded"
+            }
+            onClick={() => {
+              dispatch(showEditSuggestionForm(props.data));
+            }}
+          >
+            Edit
+          </button>
+        )}
+        {isAdmin && (
+          <button
+            className={
+              "cursor-pointer hover:text-green-600 hover:bg-green-100 px-2 duration-300 w-full text-left rounded"
+            }
+            onClick={() => {
+              deleteSuggestion({
+                id: props.data._id,
+                access_token: currentUser.data.token,
+                dispatch,
+              });
+            }}
+          >
+            Approve
+          </button>
+        )}
+        {isAdmin && (
+          <button
+            className={
+              "cursor-pointer hover:text-red-600 hover:bg-red-100 px-2 duration-300 w-full text-left rounded"
+            }
+            onClick={() => {
+              deleteSuggestion({
+                id: props.data._id,
+                access_token: currentUser.data.token,
+                dispatch,
+              });
+            }}
+          >
+            Reject
+          </button>
+        )}
+        {(isCurrentUser || isAdmin) && (
+          <button
+            className={
+              "cursor-pointer hover:text-red-600 hover:bg-red-100 px-2 duration-300 w-full text-left rounded"
+            }
+            onClick={() => {
+              deleteSuggestion({
+                id: props.data._id,
+                access_token: currentUser.data.token,
+                dispatch,
+              });
+            }}
+          >
+            Delete
+          </button>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div
       className={`${
         props.data.status.toLowerCase() === "rejected"
-          ? "border-red-400"
-          : props.data.status.toLowerCase() === "accepted"
-          ? "border-green-400"
-          : "border-orange-400"
-      }  border-l-2 shadow rounded bg-white flex items-center justify-between p-4 w-full border-transparent hover:border-blue-400 duration-300`}
+          ? "border-red-600 hover:shadow-red-600"
+          : props.data.status.toLowerCase() === "approved"
+          ? "border-green-400 hover:shadow-green-400"
+          : "border-orange-400 hover:shadow-orange-400"
+      } relative  border-l-2  shadow rounded bg-white flex items-start justify-between p-4 w-full duration-300`}
     >
       <div className="flex flex-col items-start gap-2">
         <div className="suggestion_body flex flex-col items-start gap-1">
@@ -92,12 +163,28 @@ function ProfileSuggestionCard(props: Props) {
               },
             }}
           >
-            <a className="title text-xl text-blue-400 font-semibold">
+            <a className="title text-xl hover:text-blue-400 duration-300 font-semibold">
               {props.data.title}
             </a>
           </Link>
-          <p className="body">{props.data.suggestion.slice(0, 80)}.</p>
-          <p className="body">
+          <p className="">
+            <span className="inline text-blue-400 font-semibold">
+              Suggestion:{" "}
+            </span>
+            {props.data.suggestion}
+          </p>
+          <p className="suggester">
+            {props.data.isAnonymous ? 
+              <div className="">{props.data.user.firstName[0] + ' ' + props.data.user.lastName[0]</div>   : 
+              <p className="">User</p>
+              }
+          }
+
+            {props.data.isAnonymous
+              ? "Anonymous"
+              : props.data.user.firstName + " " + props.data.user.lastName}
+          </p>
+          <p className="body text-blue-400 font-semibold">
             Status:{" "}
             <span
               className={`${
@@ -106,7 +193,7 @@ function ProfileSuggestionCard(props: Props) {
                   : props.data.status.toLowerCase() === "accepted"
                   ? "text-green-400"
                   : "text-orange-400"
-              } capitalize`}
+              } capitalize font-normal`}
             >
               {props.data.status}
             </span>
@@ -134,26 +221,24 @@ function ProfileSuggestionCard(props: Props) {
           </div>
         </div>
       </div>
-      <div className="icons flex gap-4 items-center">
-        <FaEdit
-          onClick={(e) => {
-            e.stopPropagation();
-            dispatch(showEditSuggestionForm(props.data));
-          }}
-          className="cursor-pointer text-blue-400 text-xl"
-        />
-        <FaTrash
-          onClick={(e) => {
-            e.stopPropagation();
-            deleteSuggestion({
-              id: props.data._id,
-              access_token: currentUser.data.token,
-              dispatch,
-            });
-          }}
-          className="cursor-pointer text-red-700 text-md"
-        />
-      </div>
+      {(isAdmin || isCurrentUser) && (
+        <div className="icons flex gap-4 items-center">
+          <div
+            onMouseEnter={() => setShowCardMenu(true)}
+            onMouseLeave={() => setShowCardMenu(false)}
+            className="p-2 rounded-full group hover:bg-blue-400 duration-300"
+          >
+            <FaEllipsisH className="group-hover:text-white duration-300" />
+            <div
+              className={`${
+                showCardMenu ? "scale-100 top-8" : "scale-0 top-0"
+              } duration-200 absolute z-50 right-8`}
+            >
+              <CardMenu />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

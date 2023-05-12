@@ -12,6 +12,7 @@ import suggestionSlice, {
   getSuggestionSuccess,
 } from "../../redux/suggestionSlice";
 import { startLoading } from "../../redux/loaderSlice";
+import ProfileSuggestionCard from "./ProfileSuggestionCard";
 
 interface Props {
   title: string;
@@ -156,7 +157,7 @@ const Home = () => {
         </div>
         <div className="suggestions_wrapper mt-10 grid lg:grid-cols-2 gap-6">
           {filteredSuggestions.map((data, index) => (
-            <SuggestionCard key={index} data={data} />
+            <ProfileSuggestionCard key={index} data={data} />
           ))}
         </div>
       </div>

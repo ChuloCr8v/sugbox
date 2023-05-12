@@ -48,7 +48,7 @@ const SuggestionPage = (props: {
 
   useEffect(() => {
     getComments({ id, access_token, dispatch });
-  }, [comment]);
+  }, []);
 
   return (
     <div className="bg-white flex justify-center p-4 pt-28 min-h-screen">

@@ -148,6 +148,8 @@ export const getComments = async (props) => {
     const filteredComments = comments.data.filter((data) => {
       return data.suggestionId === props.id;
     });
+    console.log(props.data.suggestionId);
+    console.log(props.id);
     props.dispatch(getCommentsSuccess(filteredComments));
   } catch (error) {
     console.log(error);
