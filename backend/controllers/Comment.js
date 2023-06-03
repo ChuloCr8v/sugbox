@@ -19,10 +19,10 @@ export const addComment = async (req, res, next) => {
     });
     const addComment = await newComment.save();
     await SuggestionModel.findByIdAndUpdate(req.params.id, {
-      $push: { comments: newComment._id },
+      $push: { comments: newComment },
     });
     await EmployeeModel.findByIdAndUpdate(req.employeeId, {
-      $push: { comments: newComment._id },
+      $push: { comments: newComment },
     });
     res.status(200).json({
       message: "Comment added successfully",

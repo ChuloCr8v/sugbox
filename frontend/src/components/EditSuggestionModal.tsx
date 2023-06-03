@@ -7,6 +7,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { startLoading, stopLoading } from "../../redux/loaderSlice";
+import { getSuggestions } from "@/apiCalls/api";
 
 const EditSuggestionModal = () => {
   const [newTitle, setNewTitle] = useState("");
@@ -74,6 +75,11 @@ const EditSuggestionModal = () => {
       }
 
       dispatch(hideEditSuggestionForm());
+      getSuggestions({
+        dispatch,
+        currentUser,
+        id: "",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -81,7 +87,7 @@ const EditSuggestionModal = () => {
   };
 
   return (
-    <div className="fixed flex items-center justify-center h-screen w-screen top-0 left-0 z-50">
+    <div className="fixed flex items-center justify-center h-screen w-screen top-0 left-0 z-40">
       <div
         className="h-screen w-screen bg-black bg-opacity-30 fixed top-0 left-0 z-0"
         onClick={() => dispatch(hideEditSuggestionForm())}

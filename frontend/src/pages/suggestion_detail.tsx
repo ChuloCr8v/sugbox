@@ -2,10 +2,8 @@ import Comment from "@/components/Comment";
 import CommentForm from "@/components/CommentForm";
 import React, { useEffect, useState } from "react";
 import { FaCommentAlt, FaEdit, FaThumbsDown, FaThumbsUp } from "react-icons/fa";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getComments,
   getSuggestion,
   handleDownvoteSuggestion,
   handleUpvoteSuggestion,
@@ -37,7 +35,6 @@ const SuggestionPage = (props: {
   const { suggestion } = useSelector((state: any) => state.suggestions);
   const { suggestions } = useSelector((state: any) => state.suggestions);
   const { editSuggestionForm } = useSelector((state: any) => state.suggestions);
-  const { comments } = useSelector((state: any) => state.comments);
   const access_token = currentUser.data.token;
 
   const id = props.id;
@@ -46,9 +43,7 @@ const SuggestionPage = (props: {
     getSuggestion({ id, dispatch });
   }, [suggestions]);
 
-  useEffect(() => {
-    getComments({ id, access_token, dispatch });
-  }, []);
+  console.log(currentUser);
 
   return (
     <div className="bg-white flex justify-center p-4 pt-28 min-h-screen">
@@ -129,7 +124,9 @@ const SuggestionPage = (props: {
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-semibold duration-200">
                 Comments{" "}
-                <span className="text-blue-400">({comments.length})</span>
+                <span className="text-blue-400">
+                  ({suggestion.data.comments.length})
+                </span>
               </h3>
               <div
                 onClick={() => setShowCommentBox(!showCommentBox)}
@@ -149,14 +146,14 @@ const SuggestionPage = (props: {
               setShowCommentBox={setShowCommentBox}
             />
           </div>
-          {comments.length < 1 ? (
+          {suggestion.data.comments.length < 1 ? (
             <div className="w-fit p-4 mt-4 shadow bg-white rounded font-semibold capitalize">
               {" "}
               <p className="">No comments</p>{" "}
             </div>
           ) : (
             <div className="comments_wrapper w-full mt-6 flex flex-col items-center gap-4">
-              {comments.map(
+              {suggestion.data.comments.map(
                 (
                   comment: {
                     replies: any;

@@ -163,7 +163,6 @@ const EmployeeProfile = () => {
         </div>
       </div>
       {editSuggestionForm && <EditSuggestionModal />}
-      {!loading && <Loading />}
       {showSuggestionBox && (
         <NewSuggestionModal setShowSuggestionBox={setShowSuggestionBox} />
       )}

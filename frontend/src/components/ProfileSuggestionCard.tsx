@@ -1,4 +1,4 @@
-import { deleteSuggestion } from "@/apiCalls/api";
+import { deleteSuggestion, getSuggestions } from "@/apiCalls/api";
 import React, { useEffect, useState } from "react";
 import {
   FaComment,
@@ -57,6 +57,9 @@ function ProfileSuggestionCard(props: Props) {
   const [suggester, setSuggester] = useState("");
 
   const { currentUser } = useSelector((state: stateProps) => state.user);
+  const { currentSuggestionView } = useSelector(
+    (state: any) => state.suggestions
+  );
 
   useEffect(() => {
     setSuggester(props.data.user.firstName + " " + props.data.user.lastName);
@@ -124,6 +127,8 @@ function ProfileSuggestionCard(props: Props) {
                 id: props.data._id,
                 access_token: currentUser.data.token,
                 dispatch,
+                currentUser,
+                currentSuggestionView,
               });
             }}
           >
@@ -163,27 +168,25 @@ function ProfileSuggestionCard(props: Props) {
               },
             }}
           >
-            <a className="title text-xl hover:text-blue-400 duration-300 font-semibold">
+            <a className="title text-xl hover:text-blue-400 duration-300 font-semibold capitalize">
               {props.data.title}
             </a>
           </Link>
           <p className="">
             <span className="inline text-blue-400 font-semibold">
-              Suggestion:{" "}
+              Details:{" "}
             </span>
             {props.data.suggestion}
           </p>
-          <p className="suggester">
-            {props.data.isAnonymous ? 
-              <div className="">{props.data.user.firstName[0] + ' ' + props.data.user.lastName[0]</div>   : 
-              <p className="">User</p>
-              }
-          }
+          <div className="">
+            <p className="suggester capitalize">
+              <span className="inline text-blue-400 font-semibold">By: </span>{" "}
+              {props.data.isAnonymous
+                ? "Anonymous"
+                : props.data.user.firstName + " " + props.data.user.lastName}
+            </p>
+          </div>
 
-            {props.data.isAnonymous
-              ? "Anonymous"
-              : props.data.user.firstName + " " + props.data.user.lastName}
-          </p>
           <p className="body text-blue-400 font-semibold">
             Status:{" "}
             <span
@@ -232,7 +235,7 @@ function ProfileSuggestionCard(props: Props) {
             <div
               className={`${
                 showCardMenu ? "scale-100 top-8" : "scale-0 top-0"
-              } duration-200 absolute z-50 right-8`}
+              } duration-200 absolute z-40 right-8`}
             >
               <CardMenu />
             </div>

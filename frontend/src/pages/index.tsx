@@ -12,13 +12,10 @@ import Loading from "@/components/Loading";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const { loading } = useSelector((state: any) => state.loading);
   const { currentUser } = useSelector((state: any) => state.user);
   const { signUpForm } = useSelector((state: any) => state.form);
   const { loginForm } = useSelector((state: any) => state.form);
   const { manageOrgModal } = useSelector((state: any) => state.form);
-  const { modal } = useSelector((state: any) => state.form);
-  const { modalMsg } = useSelector((state: any) => state.form);
 
   return (
     <>
@@ -33,7 +30,6 @@ export default function Home() {
         {manageOrgModal && !currentUser && <SignUpMenuModal />}
         {loginForm && <Login />}
         {signUpForm && <Signup />}
-        {loading && <Loading />}
       </main>
     </>
   );

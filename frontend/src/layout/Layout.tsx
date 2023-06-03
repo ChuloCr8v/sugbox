@@ -14,6 +14,7 @@ const Layout = ({ children }: any) => {
     (state: { suggestions: { editSuggestionForm: boolean } }) =>
       state.suggestions
   );
+
   return (
     <div>
       <Header />

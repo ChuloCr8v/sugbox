@@ -65,6 +65,12 @@ export const deleteSuggestion = async (props) => {
         Authorization: props.access_token,
       },
     });
+    getSuggestions({
+      dispatch: props.dispatch,
+      currentUser: props.currentUser,
+      currentSuggestionView: props.currentSuggestionView,
+      id: props.id,
+    });
   } catch (error) {
     console.log(error);
   }
@@ -136,6 +142,7 @@ export const handleDownvoteSuggestion = async (props) => {
 //COMMENTS
 
 export const getComments = async (props) => {
+  props.dispatch(startLoading());
   try {
     const comments = await axios.get(
       "http://localhost:8000/api/comment/comments/all",
@@ -145,15 +152,17 @@ export const getComments = async (props) => {
         },
       }
     );
+
+    console.log(comments);
     const filteredComments = comments.data.filter((data) => {
       return data.suggestionId === props.id;
     });
-    console.log(props.data.suggestionId);
     console.log(props.id);
     props.dispatch(getCommentsSuccess(filteredComments));
   } catch (error) {
     console.log(error);
   }
+  props.dispatch(stopLoading());
 };
 
 //Upvote comment
