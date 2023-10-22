@@ -62,7 +62,6 @@ const page = (props: Props) => {
   const user = authData({ useSelector });
   const token = getToken({ useSelector });
   const auth = localStorage.getItem("auth");
-  //console.log(user);
 
   const { singleSuggestion: suggestion } = useSelector(
     (state) => state.suggestions
