@@ -25,25 +25,25 @@ export const companySignup = async (req, res, next) => {
 //Company Sign in
 export const companyLogin = async (req, res, next) => {
   try {
-    const company = await CompanyModel.findOne({
+    const getCompany = await CompanyModel.findOne({
       companyEmail: req.body.email,
     });
-    if (!company)
+    if (!getCompany)
       return res.status(404).json(createError(404, "company does not exist"));
 
     const verifyPassword = await bcrypt.compare(
       req.body.password,
-      company.password
+      getCompany.password
     );
     if (!verifyPassword)
       return res.status(401).json(createError(401, "Wrong credential"));
 
     const token = jwt.sign(
-      { companyId: company._id },
+      { companyId: getCompany._id },
       process.env.JWT_SEC_PHRASE
     );
 
-    const { password, ...others } = company._doc;
+    const { password, suggestions, employees, ...others } = getCompany._doc;
 
     res
       .cookie("access_token", token, {
@@ -51,8 +51,8 @@ export const companyLogin = async (req, res, next) => {
       })
       .status(200)
       .json({
-        message: `${company.companyName} logged in successfully!`,
-        data: others,
+        message: `${getCompany.companyName} logged in successfully!`,
+        others,
         token: token,
       });
   } catch (error) {
@@ -114,9 +114,7 @@ export const employeeLogin = async (req, res, next) => {
       process.env.JWT_SEC_PHRASE
     );
 
-    console.log(token);
-
-    const { password, ...others } = employee._doc;
+    const { password, company, comments, ...others } = employee._doc;
 
     res
       .cookie("access_token", token, {
@@ -124,8 +122,10 @@ export const employeeLogin = async (req, res, next) => {
       })
       .status(200)
       .json({
-        message: `${employee.username} logged in successfully!`,
-        data: others,
+        message: `${
+          employee.firstName + " " + employee.lastName
+        } logged in successfully!`,
+        others,
         token: token,
       });
   } catch (error) {

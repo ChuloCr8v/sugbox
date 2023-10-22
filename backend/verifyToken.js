@@ -2,6 +2,10 @@ import { createError } from "./error.js";
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
+  //const token = req.headers.cookie.slice(13);
+  //const token = req.headers.cookie.replace("access_token=", "");
+  //console.log(token);
+  //return;
   const token = req.headers.authorization;
   if (!token) return next(createError(401, "You are not authorized!"));
 

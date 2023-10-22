@@ -7,14 +7,28 @@ export const addComment = async (req, res, next) => {
   const userId = req.employeeId || req.user;
   const suggestionId = req.params.id;
 
+  const getEmployee = await EmployeeModel.findById(userId);
+  // console.log(getEmployee);
+  const getCompany = await CompanyModel.findById(userId);
+
   try {
-    const user = req.employeeId
-      ? await EmployeeModel.findById(userId)
-      : await CompanyModel.findById(userId);
+    const user = req.employeeId ? getEmployee : getCompany;
+    //console.log(user.id);
+    const {
+      comments,
+      upvotes,
+      password,
+      company,
+      suggestions,
+      downVotes,
+      replies,
+      ...updatedUser
+    } = user._doc;
+
     const newComment = new CommentModel({
-      userId: user,
-      suggestionId: suggestionId,
+      userId: user.id,
       user: user,
+      suggestionId: suggestionId,
       ...req.body,
     });
     const addComment = await newComment.save();
@@ -84,8 +98,14 @@ export const upVoteComment = async (req, res, next) => {
     const comment = await CommentModel.findById(req.params.id);
     if (comment.userId === req.employeeId)
       return res.status(403).json("You cant vote your comment");
-    if (comment.upVotes.includes(req.employeeId))
-      return res.status(403).json("You have already upvoted");
+
+    if (comment.upVotes.includes(req.employeeId)) {
+      await CommentModel.findByIdAndUpdate(req.params.id, {
+        $pull: { upVotes: req.employeeId },
+      });
+      return;
+    }
+
     if (comment.downVotes.includes(req.employeeId)) {
       await CommentModel.findByIdAndUpdate(req.params.id, {
         $pull: {
@@ -136,7 +156,7 @@ export const downVoteComment = async (req, res, next) => {
 export const getComment = async (req, res, next) => {
   try {
     const comment = await CommentModel.findById(req.params.id);
-    if (!comment) return res.status(404).json("Suggestion not found");
+    if (!comment) return res.status(404).json("Comment not found");
     res.status(200).json(comment);
   } catch (error) {
     next(error);

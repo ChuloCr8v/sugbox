@@ -7,9 +7,18 @@ export const newSuggestion = async (req, res, next) => {
   const userId = req.employeeId || req.user;
   try {
     const user = await EmployeeModel.findById(req.employeeId);
+    const {
+      company,
+      suggestions,
+      upvotes,
+      downVotes,
+      comments,
+      replies,
+      ...others
+    } = user._doc;
     const newSuggestion = new SuggestionModel({
       userId: userId,
-      user: user,
+      user: others,
       companyId: companyId,
       ...req.body,
     });
@@ -42,6 +51,7 @@ export const getAllSuggestions = async (req, res, next) => {
   try {
     const suggestions = await SuggestionModel.find();
     res.status(200).json(suggestions);
+    console.log(suggestions);
   } catch (error) {
     next(error);
   }
@@ -184,8 +194,13 @@ export const upVoteSuggestion = async (req, res, next) => {
 
     if (suggestion.userId === req.employeeId)
       return res.status(403).json("You cant vote your suggestion");
-    if (suggestion.upVotes.includes(req.employeeId))
-      return res.status(403).json("You have already upvoted");
+    if (suggestion.upVotes.includes(req.employeeId)) {
+      await SuggestionModel.findByIdAndUpdate(req.params.id, {
+        $pull: { upVotes: req.employeeId },
+      });
+      return;
+    }
+    // return res.status(403).json("You have already upvoted");
     if (suggestion.downVotes.includes(req.employeeId)) {
       await SuggestionModel.findByIdAndUpdate(req.params.id, {
         $pull: {
@@ -213,7 +228,13 @@ export const downVoteSuggestion = async (req, res, next) => {
     if (suggestion.userId === req.employeeId)
       return res.status(403).json("You cant vote your suggestion");
     if (suggestion.downVotes.includes(req.employeeId))
-      return res.status(403).json("You have already downvoted");
+      if (suggestion.downVotes.includes(req.employeeId)) {
+        // return res.status(403).json("You have already downvoted");
+        await SuggestionModel.findByIdAndUpdate(req.params.id, {
+          $pull: { downVotes: req.employeeId },
+        });
+        return;
+      }
     if (suggestion.upVotes.includes(req.employeeId)) {
       await SuggestionModel.findByIdAndUpdate(req.params.id, {
         $pull: {
