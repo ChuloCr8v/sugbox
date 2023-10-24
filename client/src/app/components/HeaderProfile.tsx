@@ -35,9 +35,10 @@ const HeaderProfile = () => {
   };
 
   const handleLogOut = () => {
+    router.push("/login");
     dispatch(logOut());
     localStorage.removeItem("auth");
-    router.push("/login");
+    return;
   };
 
   const dropDownItems = [

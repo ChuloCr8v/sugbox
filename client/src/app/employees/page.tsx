@@ -161,8 +161,8 @@ const Employee = () => {
       title: "Suggestions",
       dataIndex: "suggestion",
       align: "center",
-      render: (_: ReactNode, record: { suggestions: {} }) => (
-        <p> {record.suggestions === "" ? record.suggestions.length : 0} </p>
+      render: (_: ReactNode, record: { suggestions: [] }) => (
+        <p> {record.suggestions.length} </p>
       ),
     },
     {

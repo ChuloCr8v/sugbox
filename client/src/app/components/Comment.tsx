@@ -29,12 +29,12 @@ const Comment = (props: Props) => {
   const token = getToken({ useSelector });
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getComment({ id, token });
-  }, []);
+  // useEffect(() => {
+  //   getComment({ id, token });
+  // }, []);
 
-  console.log(props.data);
-  console.log(isAdmin);
+  // console.log(props.data);
+  // console.log(isAdmin);
 
   return (
     <div className="border-b-[1.5px] py-4">

@@ -23,7 +23,7 @@ export interface formGroupProps {
 }
 
 export interface ModalComponentProps {
-  onOk?: () => {};
+  onOk?: () => void;
   onCancel: () => void;
   children: ReactNode;
   footer?: ReactNode;

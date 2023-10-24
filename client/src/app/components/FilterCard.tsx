@@ -12,6 +12,7 @@ interface Props {
     title: string;
     number: Number;
   };
+  setFilter: (arg0: string) => void;
 }
 
 const icon = (title: string) => {
@@ -35,7 +36,10 @@ const iconBg = (title: string) => {
 
 const FilterCard = (props: Props) => {
   return (
-    <button className="group max-w-500 w-full shadow bg-white rounded-md flex items-center justify-between px-4 py-6 hover:bg-primaryblue duration-200">
+    <button
+      onClick={() => props.setFilter(props.data.title)}
+      className="group max-w-500 w-full shadow bg-white rounded-md flex items-center justify-between px-4 py-6 hover:bg-primaryblue duration-200"
+    >
       <div className="flex flex-col items-start gap-1">
         <p className="font-bold text-xl text-left group-hover:text-white duration-200">
           {props.data.number}

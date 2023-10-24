@@ -34,7 +34,9 @@ const Button = (props: ButtonProps) => {
           onClick={props.onClick}
           className={twMerge(
             "w-[120px] py-2 rounded-full text-white duration-300 text-normal capitalize",
-            props.className
+            props.className,
+            props.disabled &&
+              "bg-gray-100 text-gray-300 hover:text-gray-300 hover:bg-gray-100"
           )}
         >
           {isLoading ? <LoadingOutlined /> : props.text}

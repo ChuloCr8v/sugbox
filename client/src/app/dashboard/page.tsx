@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { authData, getSuggestions } from "../../../api";
+import React, { useEffect, useState } from "react";
+import { authData, getSuggestions, getToken } from "../../../api";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import PageHeader from "../components/PageHeader";
@@ -10,25 +10,44 @@ import SuggestionCards from "../components/SuggestionCards";
 
 const Dashboard = () => {
   const { suggestions } = useSelector((state) => state.suggestions);
+
+  const [filteredSuggestions, setFilteredSuggestions] = useState(suggestions);
+  const [filter, setFilter] = useState("total");
   const auth = authData({ useSelector });
+  const token = getToken({ useSelector });
 
   const router = useRouter();
   const dispatch = useDispatch();
+  const companyId = auth?.companyId || auth?._id;
 
   useEffect(() => {
     !auth && router.push("/login");
+    return;
   }, [auth]);
 
+  console.log(auth);
+
   useEffect(() => {
-    getSuggestions({ dispatch });
+    getSuggestions({ dispatch, token, companyId: companyId });
     console.log(suggestions);
   }, []);
+
+  useEffect(() => {
+    if (filter === "total") {
+      setFilteredSuggestions(suggestions);
+    } else {
+      const statusFilter = suggestions.filter(
+        (s: { status: string }) => s.status === filter
+      );
+      setFilteredSuggestions(statusFilter);
+    }
+  }, [filter]);
 
   return (
     <div className="w-full p-10 pt-24">
       <PageHeader title="Dashboard" />
-      <FilterCards data={suggestions} />
-      <SuggestionCards data={suggestions} />
+      <FilterCards data={suggestions} setFilter={setFilter} />
+      <SuggestionCards data={filteredSuggestions} />
     </div>
   );
 };

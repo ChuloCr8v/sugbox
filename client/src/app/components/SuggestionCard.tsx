@@ -36,8 +36,6 @@ const SuggestionCard = (props: Props) => {
     } else return "primaryblue";
   };
 
-  console.log(props.data);
-
   return (
     <Link
       href={{

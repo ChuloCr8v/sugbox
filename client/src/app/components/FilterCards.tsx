@@ -3,20 +3,32 @@ import FilterCard from "./FilterCard";
 
 interface Props {
   data: [];
+  setFilter: (arg0: string) => void;
 }
 
 const FilterCards = (props: Props) => {
+  const pending = props.data.filter((d: { status: string }) =>
+    d.status.toLowerCase().includes("pending")
+  );
+  const approved = props.data.filter((d: { status: string }) =>
+    d.status.toLowerCase().includes("approved")
+  );
+  const rejected = props.data.filter((d: { status: string }) =>
+    d.status.toLowerCase().includes("rejected")
+  );
   const filters = [
     { title: "total", number: props.data.length },
-    { title: "pending", number: props.data.length },
-    { title: "approved", number: props.data.length },
-    { title: "rejected", number: props.data.length },
+    { title: "pending", number: pending.length },
+    { title: "approved", number: approved.length },
+    { title: "rejected", number: rejected.length },
   ];
+
+  console.log(props.data);
 
   return (
     <div className="flex items-center gap-4 mt-4">
       {filters.map((d, index) => (
-        <FilterCard data={d} />
+        <FilterCard data={d} key={index} setFilter={props.setFilter} />
       ))}
     </div>
   );

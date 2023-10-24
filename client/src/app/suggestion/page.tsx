@@ -4,19 +4,13 @@ import {
   CheckOutlined,
   CloseCircleOutlined,
   QuestionCircleOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
-import { Avatar } from "antd";
-import { ChangeEvent, useEffect, useState } from "react";
-import {
-  FaCheck,
-  FaCheckDouble,
-  FaThumbsDown,
-  FaThumbsUp,
-  FaTimes,
-  FaTrash,
-  FaUserNinja,
-} from "react-icons/fa";
+import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaCheck, FaTimes, FaTrash, FaUserNinja } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { twMerge } from "tailwind-merge";
 import {
   authData,
   commentSuggestion,
@@ -25,18 +19,16 @@ import {
   getToken,
   upVoteSuggestion,
 } from "../../../api";
-import { useDispatch, useSelector } from "react-redux";
-import TextArea from "antd/es/input/TextArea";
-import { twMerge } from "tailwind-merge";
+import {
+  approveSuggestions,
+  deleteSuggestion,
+  rejectSuggestion,
+} from "../api/suggestions";
+import Button from "../components/Button";
 import CommentBox from "../components/CommentBox";
 import Comments from "../components/Comments";
 import { VoteComponent } from "../components/SmallerComponents";
-import moment from "moment";
-import dayjs from "dayjs";
-import { useRouter } from "next/navigation";
-import Button from "../components/Button";
 import ModalComponent from "../components/modals/Modal";
-import { approveSuggestions } from "../api/suggestions";
 
 interface Props {
   searchParams: {
@@ -67,17 +59,13 @@ const page = (props: Props) => {
     (state) => state.suggestions
   );
 
+  const isAdmin = user.isAdmin;
+
   useEffect(() => {
     getSuggestion({ dispatch, id: props.searchParams.id });
   }, []);
-  //console.log(suggestion.upVotes);
-  console.log(props.searchParams.id);
-  console.log(suggestion);
-  console.log(props.searchParams.id);
 
   const router = useRouter();
-
-  console.log(auth);
 
   if (auth === null) {
     router.push("/login");
@@ -136,8 +124,6 @@ const page = (props: Props) => {
       : "bg-red-100 text-red-500";
   }
 
-  console.log(statusColor);
-
   function icon(): import("react").ReactNode {
     if (suggestion.status.toLowerCase() === "pending") {
       return <QuestionCircleOutlined />;
@@ -172,34 +158,56 @@ const page = (props: Props) => {
     );
   };
 
-  const suggestionAction = () => {
-    if (btnTitle.toLowerCase() === "approve") {
-      return <Approve />;
-    } else if (btnTitle.toLowerCase() === "reject") {
-      return <div className="">Reject</div>;
-    } else return <div className="">Delete</div>;
-  };
-
-  const btnAction = () => {
-    if (btnTitle.toLowerCase() === "approve") {
-      approveSuggestions({ dispatch, token });
-    }
-
-    return;
-  };
-
-  const Footer = () => {
+  const Reject = () => {
     return (
       <div className="">
-        <Button className={""} text={btnTitle} disabled={false} />
-        <Button className={""} text={"Cancel"} disabled={false} />
+        <p className="">
+          Reject this suggestion{" "}
+          <span className="text-primaryblue font-bold">
+            {suggestion.title}?
+          </span>
+        </p>
       </div>
     );
   };
 
+  const Delete = () => {
+    return (
+      <div className="">
+        <p className="">
+          Delete this suggestion{" "}
+          <span className="text-primaryblue font-bold">
+            {suggestion.title}?
+          </span>
+        </p>
+      </div>
+    );
+  };
+
+  const suggestionAction = () => {
+    if (btnTitle.toLowerCase() === "approve") {
+      return <Approve />;
+    } else if (btnTitle.toLowerCase() === "reject") {
+      return (
+        <div className="">
+          <Reject />
+        </div>
+      );
+    } else
+      return (
+        <div className="">
+          <Delete />
+        </div>
+      );
+  };
+
   const handleActionBtnClick = () => {
     if (btnTitle.toLowerCase() === "approve") {
-      approveSuggestions({ dispatch, token, id });
+      approveSuggestions({ dispatch, token, id, setShowActionModal });
+    } else if (btnTitle.toLowerCase() === "reject") {
+      rejectSuggestion({ dispatch, token, id, setShowActionModal });
+    } else {
+      deleteSuggestion({ id, dispatch, token, router, setShowActionModal });
     }
   };
 
@@ -252,9 +260,15 @@ const page = (props: Props) => {
                 }
               />
             </div>
-            <div className="admin-panel flex items-center justify-start gap-4 p-4 border-t border-bordercolor">
+            <div
+              className={twMerge(
+                "admin-panel items-center justify-start gap-4 p-4 border-t border-bordercolor",
+                isAdmin ? "flex" : "hidden"
+              )}
+            >
               {actionButtonProps.map((btnProp, index) => (
                 <Button
+                  key={index}
                   className={twMerge(
                     `w-fit text-white rounded-lg px-3 py-1 text-[12px]`,
                     btnProp.color,
@@ -266,7 +280,9 @@ const page = (props: Props) => {
                       <span>{btnProp.icon}</span>
                     </span>
                   }
-                  disabled={false}
+                  disabled={suggestion.status
+                    .toLowerCase()
+                    .includes(btnProp.btnTitle.toLowerCase())}
                   onClick={() => {
                     setShowActionModal(true);
                     setBtnTitle(btnProp.btnTitle);

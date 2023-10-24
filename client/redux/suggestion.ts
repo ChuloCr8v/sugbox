@@ -40,9 +40,9 @@ export const suggestionSlice = createSlice({
     },
     deleteSuggestionSuccess: (state, action) => {
       state.isLoading = false;
-      const userId = action.payload;
+      const id = action.payload;
       const deleted = state.suggestions.filter(
-        (user: { _id: string }) => user._id !== userId
+        (suggestion: { _id: string }) => suggestion._id !== id
       );
       state.suggestions = deleted;
     },
@@ -50,30 +50,23 @@ export const suggestionSlice = createSlice({
       state.isLoading = false;
       state.error = true;
     },
-    approveSuggestion: (state, action) => {
-      const otherSuggestions = state.suggestions.filter(
-        (suggestion) => suggestion._id !== action.payload
-      );
-      const updateSuggestion = state.suggestions.find(
-        (suggestion: { _id: string }) => suggestion._id === action.payload
-      );
-
-      if (updateSuggestion) {
-        updateSuggestion.status = "approve";
-      }
-      [...otherSuggestions, updateSuggestion];
+    approveSingleSuggestion: (state, action) => {
+      return {
+        ...state,
+        singleSuggestion: {
+          ...state.singleSuggestion,
+          status: "approved",
+        },
+      };
     },
-    rejectSuggestion: (state, action) => {
-      const otherSuggestions = state.suggestions.filter(
-        (suggestion) => suggestion._id !== action.payload
-      );
-      const updateSuggestion = state.suggestions.find(
-        (suggestion: { _id: string }) => suggestion._id === action.payload
-      );
-      if (updateSuggestion) {
-        updateSuggestion.status = "rejected";
-      }
-      [...otherSuggestions, updateSuggestion];
+    rejectSingleSuggestion: (state, action) => {
+      return {
+        ...state,
+        singleSuggestion: {
+          ...state.singleSuggestion,
+          status: "rejected",
+        },
+      };
     },
 
     upVoteSingleSuggestion: (state, action) => {
@@ -130,9 +123,9 @@ export const {
   deleteSuggestion,
   deleteSuggestionFailure,
   deleteSuggestionSuccess,
-  approveSuggestion,
+  approveSingleSuggestion,
   getSingleSuggestion,
-  rejectSuggestion,
+  rejectSingleSuggestion,
   upVoteSingleSuggestion,
   downVoteSingleSuggestion,
 } = suggestionSlice.actions;

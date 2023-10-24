@@ -25,7 +25,7 @@ import {
   startLoading,
   stopLoading,
 } from "./redux/modals";
-import {
+import suggestion, {
   addSuggestionSuccess,
   downVoteSingleSuggestion,
   getSingleSuggestion,
@@ -151,9 +151,10 @@ export const signIn = async ({ dispatch, loginData, router }: Props) => {
   try {
     const authDetails = await axios.put(
       "http://localhost:8000/api/auth/company/login-company",
+
       loginData
     );
-
+    console.log(authDetails);
     const auth = authDetails.data;
     localStorage.setItem("auth", auth);
 
@@ -432,13 +433,23 @@ export const addSuggestion = async ({
   }
   dispatch(stopLoading());
 };
-export const getSuggestions = async ({ dispatch }) => {
-  dispatch(startLoading());
+export const getSuggestions = async ({ dispatch, token, companyId }) => {
+  // dispatch(startLoading());
+  dispatch(stopLoading());
+
   try {
     const getSuggestions = await axios.get(
-      "http://localhost:8000/api/suggestion/all"
+      `http://localhost:8000/api/suggestion/all/${companyId}`
     );
-    const res = getSuggestions.data;
+
+    console.log(getSuggestions);
+
+    const res = getSuggestions.data.filter(
+      (suggestion: { companyId: string }) => suggestion.companyId === companyId
+    );
+
+    console.log(res);
+
     dispatch(getSuggestionSuccess(res));
   } catch (error) {
     dispatch(
@@ -449,7 +460,6 @@ export const getSuggestions = async ({ dispatch }) => {
     );
     console.log(error);
   }
-  dispatch(stopLoading());
 };
 
 export const getSuggestion = async ({ dispatch, id }) => {
@@ -585,30 +595,29 @@ export const getComments = async ({ token, suggestionId, dispatch }) => {
       (item: { suggestionId: string }) => item.suggestionId === suggestionId
     );
     dispatch(getCommentsSuccess(comment));
-    console.log(comment);
   } catch (error) {
     throw error;
   }
   // dispatch(stopLoading());
 };
 
-///Get SINGLE COMMENT
+// ///Get SINGLE COMMENT
 
-export const getComment = async ({ token, suggestionId, dispatch, id }) => {
-  // dispatch(startLoading());
-  try {
-    const res = await axios.get(`http://localhost:8000/api/comment/${id}`, {
-      headers: {
-        Authorization: `${token}`,
-      },
-    });
-    const data = res.data;
-    dispatch(getCommentsSuccess(data));
-  } catch (error) {
-    console.log(error);
-  }
-  // dispatch(stopLoading());
-};
+// export const getComment = async ({ token, suggestionId, dispatch, id }) => {
+//   // dispatch(startLoading());
+//   try {
+//     const res = await axios.get(`http://localhost:8000/api/comment/${id}`, {
+//       headers: {
+//         Authorization: `${token}`,
+//       },
+//     });
+//     const data = res.data;
+//     dispatch(getCommentsSuccess(data));
+//   } catch (error) {
+//     console.log(error);
+//   }
+//   // dispatch(stopLoading());
+// };
 
 ///UPVOTE COMMENT
 
