@@ -46,6 +46,7 @@ const page = (props: Props) => {
   const [comment, setComment] = useState("");
   const [showActionModal, setShowActionModal] = useState(false);
   const [btnTitle, setBtnTitle] = useState("");
+  const { isLoading } = useSelector((state) => state.modals);
 
   const id = props.searchParams.id;
 
@@ -107,12 +108,6 @@ const page = (props: Props) => {
       color: "bg-orange-500",
       hoverColor: "hover:bg-orange-800",
       icon: <FaTimes />,
-    },
-    {
-      btnTitle: "Delete",
-      color: "bg-red-500",
-      hoverColor: "hover:bg-red-800",
-      icon: <FaTrash />,
     },
   ];
 
@@ -263,32 +258,57 @@ const page = (props: Props) => {
             <div
               className={twMerge(
                 "admin-panel items-center justify-start gap-4 p-4 border-t border-bordercolor",
-                isAdmin ? "flex" : "hidden"
+                isAdmin || user._id === suggestion.userId ? "flex" : "hidden"
               )}
             >
-              {actionButtonProps.map((btnProp, index) => (
-                <Button
-                  key={index}
-                  className={twMerge(
-                    `w-fit text-white rounded-lg px-3 py-1 text-[12px]`,
-                    btnProp.color,
-                    btnProp.hoverColor
-                  )}
-                  text={
-                    <span className="flex items-center gap-3">
-                      {btnProp.btnTitle}
-                      <span>{btnProp.icon}</span>
-                    </span>
-                  }
-                  disabled={suggestion.status
-                    .toLowerCase()
-                    .includes(btnProp.btnTitle.toLowerCase())}
-                  onClick={() => {
-                    setShowActionModal(true);
-                    setBtnTitle(btnProp.btnTitle);
-                  }}
-                />
-              ))}
+              {isAdmin &&
+                actionButtonProps.map((btnProp, index) => (
+                  <Button
+                    key={index}
+                    className={twMerge(
+                      `w-fit text-white rounded-lg px-3 py-1 text-[12px]`,
+                      btnProp.color,
+                      btnProp.hoverColor
+                    )}
+                    text={
+                      <span className="flex items-center gap-3">
+                        {btnProp.btnTitle}
+                        <span>{btnProp.icon}</span>
+                      </span>
+                    }
+                    disabled={
+                      suggestion.status
+                        .toLowerCase()
+                        .includes(btnProp.btnTitle.toLowerCase()) ||
+                      (suggestion.status.toLowerCase() === "approved" &&
+                        btnProp.btnTitle.toLowerCase() === "delete")
+                    }
+                    onClick={() => {
+                      setShowActionModal(true);
+                      setBtnTitle(btnProp.btnTitle);
+                    }}
+                  />
+                ))}
+
+              {isAdmin ||
+                (user._id === suggestion.userId && (
+                  <Button
+                    className={twMerge(
+                      `w-fit text-white rounded-lg px-3 py-1 text-[12px] bg-red-500 hover:bg-red-700`
+                    )}
+                    text={
+                      <span className="flex items-center gap-3">
+                        Delete
+                        <FaTrash />
+                      </span>
+                    }
+                    disabled={suggestion.status.toLowerCase() === "approved"}
+                    onClick={() => {
+                      setShowActionModal(true);
+                      setBtnTitle("delete");
+                    }}
+                  />
+                ))}
             </div>
           </div>
           <CommentBox
@@ -298,7 +318,7 @@ const page = (props: Props) => {
             setComment={setComment}
             comment={comment}
           />
-          <Comments suggestionId={id} />
+          {isLoading ? "Loading" : <Comments suggestionId={id} />}
         </div>
 
         <div className="col-span-1 p-4 bg-white shadow rounded-md flex flex-col items-center gap-2">

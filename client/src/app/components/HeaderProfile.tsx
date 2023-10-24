@@ -109,7 +109,7 @@ const HeaderProfile = () => {
           {avatar()}
         </div>{" "}
         <p className="text-textcolor font-semibold text-base group-hover:text-primaryblue duration-200">
-          {username()}
+          {username()} {userDetails.isAdmin && <span className="">Admin</span>}
         </p>
       </div>
       <DownOutlined className="text-text-color text-[12px] group-hover:text-primaryblue duration-200" />

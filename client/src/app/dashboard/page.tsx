@@ -46,7 +46,7 @@ const Dashboard = () => {
   return (
     <div className="w-full p-10 pt-24">
       <PageHeader title="Dashboard" />
-      <FilterCards data={suggestions} setFilter={setFilter} />
+      <FilterCards data={suggestions} setFilter={setFilter} filter={filter} />
       <SuggestionCards data={filteredSuggestions} />
     </div>
   );

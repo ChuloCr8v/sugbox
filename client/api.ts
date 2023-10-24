@@ -580,7 +580,6 @@ export const commentSuggestion = async ({
 };
 
 export const getComments = async ({ token, suggestionId, dispatch }) => {
-  // dispatch(startLoading());
   try {
     const res = await axios.get(
       "http://localhost:8000/api/comment/comments/all",
@@ -598,7 +597,7 @@ export const getComments = async ({ token, suggestionId, dispatch }) => {
   } catch (error) {
     throw error;
   }
-  // dispatch(stopLoading());
+  dispatch(stopLoading());
 };
 
 // ///Get SINGLE COMMENT

@@ -32,6 +32,8 @@ export default function RootLayout({
 
   console.log(auth);
 
+  console.log(auth);
+
   useEffect(() => {
     !auth && router.push("/login");
   }, []);

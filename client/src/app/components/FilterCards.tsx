@@ -4,6 +4,7 @@ import FilterCard from "./FilterCard";
 interface Props {
   data: [];
   setFilter: (arg0: string) => void;
+  filter: string;
 }
 
 const FilterCards = (props: Props) => {
@@ -28,7 +29,12 @@ const FilterCards = (props: Props) => {
   return (
     <div className="flex items-center gap-4 mt-4">
       {filters.map((d, index) => (
-        <FilterCard data={d} key={index} setFilter={props.setFilter} />
+        <FilterCard
+          data={d}
+          key={index}
+          setFilter={props.setFilter}
+          filter={props.filter}
+        />
       ))}
     </div>
   );
