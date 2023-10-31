@@ -10,6 +10,7 @@ const initialState = {
   newEmployeeModal: false,
   newSuggestionModal: false,
   newCommentModal: false,
+  editSuggestionModal: {},
 };
 export const modalSlice = createSlice({
   name: "modals",
@@ -60,6 +61,12 @@ export const modalSlice = createSlice({
     hideNewCommentModal: (state) => {
       state.newCommentModal = false;
     },
+    showEditSuggestionModal: (state, action) => {
+      state.editSuggestionModal = action.payload;
+    },
+    hideEditSuggestionModal: (state) => {
+      state.editSuggestionModal = false;
+    },
   },
 });
 
@@ -78,5 +85,7 @@ export const {
   hideNewSuggestionModal,
   showNewCommentModal,
   hideNewCommentModal,
+  showEditSuggestionModal,
+  hideEditSuggestionModal,
 } = modalSlice.actions;
 export default modalSlice.reducer;

@@ -23,6 +23,7 @@ export const Input = (props: inputProps) => {
       onChange={props.onchange}
       placeholder={props.placeholder}
       required={props.required}
+      value={props.value}
     />
   );
 };
@@ -36,6 +37,7 @@ export const TextArea = (props: inputProps) => {
       onChange={props.onchange}
       placeholder={props.placeholder}
       required={props.required}
+      value={props.value}
     />
   );
 };
@@ -51,6 +53,7 @@ export const FormGroup = (props: formGroupProps) => {
           name={props.name}
           required={props.required}
           type={""}
+          value={props.value}
         />
       ) : (
         <Input
@@ -59,6 +62,7 @@ export const FormGroup = (props: formGroupProps) => {
           placeholder={props.placeholder}
           name={props.name}
           required={props.required}
+          value={props.value}
         />
       )}
     </div>

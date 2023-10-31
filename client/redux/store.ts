@@ -6,6 +6,7 @@ import auth from "./auth";
 import employees from "./employees";
 import suggestion from "./suggestion";
 import comments from "./comments";
+import loading from "./loading";
 
 const persistConfig = {
   key: "root",
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   employees: employees,
   suggestions: suggestion,
   comments: comments,
+  loading: loading,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

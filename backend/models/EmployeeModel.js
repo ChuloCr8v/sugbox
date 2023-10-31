@@ -27,8 +27,8 @@ const EmployeeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    isAdmin: {
-      type: Boolean,
+    role: {
+      type: String,
       default: false,
     },
     img: {
@@ -47,6 +47,12 @@ const EmployeeSchema = new mongoose.Schema(
       type: [],
     },
     replies: {
+      type: [],
+    },
+    approvedSuggestions: {
+      type: [],
+    },
+    rejectedSuggestions: {
       type: [],
     },
   },

@@ -27,14 +27,10 @@ const SignIn = () => {
   const dispatch = useDispatch();
 
   authData({ useSelector });
-  // const { auth } = useSelector((state) => state.auth);
-
-  // console.log(auth.auth.data.others);
 
   const handleInputChange = (e) => {
     e.preventDefault();
     setInputValue({ ...inputValue, [e.target.name]: e.target.value });
-    console.log(inputValue);
   };
 
   const handleSubmit = (e) => {
@@ -52,7 +48,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen">
+    <div className="grid grid-cols-2 h-screen w-screen overflow-hidden">
       <div className="bg-gradient-to-r from-primaryblue to-cyan-700  hidden xl:flex flex-col items-center justify-center h-full w-full">
         <Image
           src={"/box.png"}
@@ -62,8 +58,11 @@ const SignIn = () => {
           className=""
         />
         <h2 className="font-bold text-2xl text-white mt-6">Welcome Back</h2>
-        <p className="text-lg text-white mt-1">
-          Login To Leave Your Suggestions
+        <p className="text-lg text-white mt-1 capitalize">
+          Login To{" "}
+          {loginRole !== "employee"
+            ? " View Latest Suggestions from your employees"
+            : "Leave Your Suggestions"}
         </p>
       </div>
       <div className=" flex items-center justify-center h-full w-full">

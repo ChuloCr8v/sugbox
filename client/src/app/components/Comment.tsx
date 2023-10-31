@@ -29,13 +29,6 @@ const Comment = (props: Props) => {
   const token = getToken({ useSelector });
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   getComment({ id, token });
-  // }, []);
-
-  // console.log(props.data);
-  // console.log(isAdmin);
-
   return (
     <div className="border-b-[1.5px] py-4">
       <div className="flex items-start flex-col gap-3">

@@ -13,8 +13,9 @@ import {
   getEmployee,
   getEmployeeFailure,
   getEmployeeSuccess,
-  giveAdminPrivilege,
-  removeAdminPrivilege,
+  getSingleEmployee,
+  giveModeratorPrivilege,
+  removeModeratorPrivilege,
 } from "./redux/employees";
 import {
   hideAlert,
@@ -26,17 +27,24 @@ import {
   stopLoading,
 } from "./redux/modals";
 import suggestion, {
+  addSingleUserSuggestion,
   addSuggestionSuccess,
   downVoteSingleSuggestion,
   getSingleSuggestion,
   getSuggestionSuccess,
+  getSuggestionsFailure,
+  getSuggestionsStart,
   upVoteSingleSuggestion,
 } from "./redux/suggestion";
 import {
   addComment,
+  addCommentFailure,
+  addCommentStart,
+  addCommentSuccessful,
   getCommentsSuccess,
   upvoteComment,
 } from "./redux/comments";
+import { stopSuggestionsLoading, suggestionsLoading } from "./redux/loading";
 
 interface Props {
   signUpData: {};
@@ -154,13 +162,10 @@ export const signIn = async ({ dispatch, loginData, router }: Props) => {
 
       loginData
     );
-    console.log(authDetails);
     const auth = authDetails.data;
     localStorage.setItem("auth", auth);
 
     dispatch(loginSuccess(auth));
-
-    console.log(authDetails.data);
 
     dispatch(
       showAlert({
@@ -201,8 +206,6 @@ export const employeeSignIn = async ({
     const auth = authDetails.data;
 
     dispatch(loginSuccess(auth));
-
-    console.log(authDetails.data);
 
     dispatch(
       showAlert({
@@ -272,7 +275,8 @@ export const employeeSignUp = async ({
 };
 
 export const getEmployees = async ({ dispatch, id }) => {
-  dispatch(getEmployee());
+  dispatch(startLoading());
+  console.log(id);
   try {
     const fetch = await axios.get("http://localhost:8000/api/employee/all");
     const employees = fetch.data.filter(
@@ -280,18 +284,18 @@ export const getEmployees = async ({ dispatch, id }) => {
     );
     dispatch(getEmployeeSuccess(employees));
   } catch (error) {
-    dispatch(getEmployeeFailure());
     console.log(error);
   }
+  dispatch(stopLoading());
 };
 
 export const getOneEmployee = async ({ dispatch, id }) => {
   try {
-    const fetch = await axios.get("http://localhost:8000/api/employee/all");
-    const employees = fetch.data.filter(
-      (d: { companyId: string }) => d.companyId === id
+    const employee = await axios.get(
+      `http://localhost:8000/api/employee/${id}`
     );
-    dispatch(getEmployeeSuccess(employees));
+
+    dispatch(getSingleEmployee(employee.data));
   } catch (error) {
     dispatch(getEmployeeFailure());
     console.log(error);
@@ -343,7 +347,7 @@ export const deleteEmployee = async ({
   setTimeout(() => dispatch(hideAlert()), 3000);
 };
 
-export const makeAdmin = async ({
+export const makeModerator = async ({
   dispatch,
   id,
   token,
@@ -355,7 +359,7 @@ export const makeAdmin = async ({
     const newAdmin = await axios.put(
       `http://localhost:8000/api/employee/edit-employee/${id}`,
       {
-        isAdmin: true,
+        role: "moderator",
       },
       {
         headers: {
@@ -364,7 +368,7 @@ export const makeAdmin = async ({
       }
     );
 
-    dispatch(giveAdminPrivilege(id));
+    dispatch(giveModeratorPrivilege(id));
     setShowConfirmModal(false);
   } catch (error) {
     console.log(error);
@@ -372,19 +376,18 @@ export const makeAdmin = async ({
   dispatch(stopLoading());
 };
 
-export const removeAdmin = async ({
+export const removeModerator = async ({
   dispatch,
   id,
   token,
   setShowConfirmModal,
 }) => {
   dispatch(startLoading());
-  console.log(dispatch);
   try {
     await axios.put(
       `http://localhost:8000/api/employee/edit-employee/${id}`,
       {
-        isAdmin: false,
+        role: "staff",
       },
       {
         headers: {
@@ -392,7 +395,7 @@ export const removeAdmin = async ({
         },
       }
     );
-    dispatch(removeAdminPrivilege(id));
+    dispatch(removeModeratorPrivilege(id));
     setShowConfirmModal(false);
   } catch (error) {
     console.log(error);
@@ -421,6 +424,7 @@ export const addSuggestion = async ({
     );
     const res = newSuggestion.data;
     dispatch(addSuggestionSuccess(res.data));
+    dispatch(addSingleUserSuggestion(res.data));
     dispatch(hideNewSuggestionModal());
   } catch (error) {
     dispatch(
@@ -434,21 +438,16 @@ export const addSuggestion = async ({
   dispatch(stopLoading());
 };
 export const getSuggestions = async ({ dispatch, token, companyId }) => {
-  // dispatch(startLoading());
-  dispatch(stopLoading());
+  dispatch(getSuggestionsStart());
 
   try {
     const getSuggestions = await axios.get(
       `http://localhost:8000/api/suggestion/all/${companyId}`
     );
 
-    console.log(getSuggestions);
-
     const res = getSuggestions.data.filter(
       (suggestion: { companyId: string }) => suggestion.companyId === companyId
     );
-
-    console.log(res);
 
     dispatch(getSuggestionSuccess(res));
   } catch (error) {
@@ -458,20 +457,19 @@ export const getSuggestions = async ({ dispatch, token, companyId }) => {
         alertType: "error",
       })
     );
+    dispatch(getSuggestionsFailure());
     console.log(error);
   }
 };
 
 export const getSuggestion = async ({ dispatch, id }) => {
   dispatch(startLoading());
-  console.log(id);
   try {
     const getSuggestion = await axios.get(
       `http://localhost:8000/api/suggestion/get-suggestion/${id}`
     );
     const res = getSuggestion.data;
     dispatch(getSingleSuggestion(res));
-    console.log(res);
   } catch (error) {
     dispatch(
       showAlert({
@@ -491,7 +489,6 @@ export const upVoteSuggestion = ({
   userId,
   upVotes,
 }: voteProps) => {
-  console.log(token);
   try {
     axios.put(
       `http://localhost:8000/api/suggestion/upvote/${id}`,
@@ -539,7 +536,7 @@ export const commentSuggestion = async ({
   token,
   setComment,
 }) => {
-  dispatch(startLoading());
+  dispatch(addCommentStart());
   try {
     const newComment = await axios.post(
       `http://localhost:8000/api/comment/new-comment/${id}`,
@@ -554,7 +551,7 @@ export const commentSuggestion = async ({
     );
 
     const res = newComment.data.data;
-    dispatch(addComment(res));
+    dispatch(addCommentSuccessful(res));
     dispatch(hideNewCommentModal());
     setComment("");
     dispatch(
@@ -570,12 +567,8 @@ export const commentSuggestion = async ({
         alertType: "error",
       })
     );
-    throw error;
-  } finally {
-    dispatch(stopLoading());
-    setTimeout(() => {
-      dispatch(hideAlert());
-    }, 3000);
+    console.log(error);
+    dispatch(addCommentFailure());
   }
 };
 

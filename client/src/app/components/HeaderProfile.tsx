@@ -44,7 +44,7 @@ const HeaderProfile = () => {
   const dropDownItems = [
     {
       label: "Profile",
-      link: "/dashboard",
+      link: "/profile",
       icon: <AppstoreAddOutlined />,
     },
     {
@@ -86,7 +86,7 @@ const HeaderProfile = () => {
                 {" "}
                 {item.icon}
                 <Button
-                  className={"p-0 w-0"}
+                  className={"p-0 w-0 font-normal"}
                   text={item.label}
                   disabled={false}
                   onClick={item.onclick}
@@ -109,7 +109,12 @@ const HeaderProfile = () => {
           {avatar()}
         </div>{" "}
         <p className="text-textcolor font-semibold text-base group-hover:text-primaryblue duration-200">
-          {username()} {userDetails.isAdmin && <span className="">Admin</span>}
+          {username()}{" "}
+          {userDetails.isAdmin && (
+            <span className="bg-blue-100 text-primaryblue border border-primaryblue rounded-full px-4 py-0.5  ml-2 text-[12px]">
+              Admin
+            </span>
+          )}
         </p>
       </div>
       <DownOutlined className="text-text-color text-[12px] group-hover:text-primaryblue duration-200" />

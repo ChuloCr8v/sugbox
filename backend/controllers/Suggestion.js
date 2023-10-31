@@ -16,6 +16,7 @@ export const newSuggestion = async (req, res, next) => {
       replies,
       ...others
     } = user._doc;
+
     const newSuggestion = new SuggestionModel({
       userId: userId,
       user: others,
@@ -51,7 +52,6 @@ export const getAllSuggestions = async (req, res, next) => {
   try {
     const suggestions = await SuggestionModel.find();
     res.status(200).json(suggestions);
-    console.log(suggestions);
   } catch (error) {
     next(error);
   }
@@ -67,7 +67,6 @@ export const editSuggestion = async (req, res, next) => {
         new Date(suggestion.createdAt).getTime() - new Date().getTime()
       ) /
       (1000 * 60 * 60);
-    console.log(timeElasped);
 
     if (timeElasped > 24)
       return res
@@ -93,7 +92,6 @@ export const editSuggestion = async (req, res, next) => {
 //Approve Suggestion
 
 export const approveSuggestion = async (req, res, next) => {
-  console.log(req.user);
   try {
     const suggestion = await SuggestionModel.findById(req.params.id);
     if (suggestion.companyId !== req.user)
@@ -119,7 +117,6 @@ export const approveSuggestion = async (req, res, next) => {
 //Reject Suggestion
 
 export const rejectSuggestion = async (req, res, next) => {
-  console.log(req.user);
   try {
     const suggestion = await SuggestionModel.findById(req.params.id);
     if (suggestion.companyId !== req.user)

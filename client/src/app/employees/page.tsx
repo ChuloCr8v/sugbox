@@ -8,15 +8,15 @@ import {
   deleteEmployee,
   getEmployees,
   getToken,
-  makeAdmin,
-  removeAdmin,
+  makeModerator,
+  removeModerator,
 } from "../../../api";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import Button from "../components/Button";
 import { twMerge } from "tailwind-merge";
 import { ColumnsType } from "antd/es/table";
-import { Dropdown, Menu, MenuProps, Modal } from "antd";
+import { Dropdown, MenuProps, Modal } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -47,6 +47,7 @@ interface ConfirmModalProps {
 
 const Employee = () => {
   const [showConfirmModal, setShowConfirmModal] = useState({});
+  const { isLoading } = useSelector((state) => state.modals);
 
   const dispatch = useDispatch();
   const userData = authData({ useSelector });
@@ -56,13 +57,14 @@ const Employee = () => {
   const token = getToken({ useSelector });
   const auth = authData({ useSelector });
   const router = useRouter();
+  const id = userData.companyId ? userData.companyId : userData._id;
 
   if (!auth) {
     return router.push("/login");
   }
 
   useEffect(() => {
-    getEmployees({ dispatch, id: userData._id });
+    getEmployees({ dispatch, id });
   }, []);
 
   const DropDown = ({
@@ -81,17 +83,19 @@ const Employee = () => {
         label: (
           <div className="flex flex-col items-start ">
             <Button
-              className={twMerge("w-full h-fit p-0")}
+              className={twMerge("h-fit px-0 py-0 p-0 w-fit")}
               text={
                 <div className="px-4 py-2 w-full flex items-center gap-4 hover:bg-blue-50">
                   <UserSwitchOutlined />
                   <span className="">
-                    {data.isAdmin ? "remove admin" : "Make Admin"}
+                    {data.role.toLowerCase() === "moderator"
+                      ? "remove moderator"
+                      : "Make Moderator"}
                   </span>
                 </div>
               }
               disabled={false}
-              onClick={() => handleMakeAdmin(data)}
+              onClick={() => handleMakeModerator(data)}
             />
 
             <Button
@@ -150,11 +154,14 @@ const Employee = () => {
       render: (_: ReactNode, record) => <p className="">{record.email}</p>,
     },
     {
-      title: "Status",
+      title: "Role",
       align: "center",
-      dataIndex: "status",
-      render: (_: ReactNode, record: { isAdmin: boolean }) => (
-        <p> {record.isAdmin === true ? "Admin" : "Staff"}</p>
+      dataIndex: "role",
+      render: (_: ReactNode, record: { role: string }) => (
+        <p>
+          {" "}
+          {record.role.toLowerCase() === "moderator" ? "Moderator" : "Staff"}
+        </p>
       ),
     },
     {
@@ -175,24 +182,35 @@ const Employee = () => {
     },
   ];
 
-  const handleMakeAdmin = (record) => {
+  const handleMakeModerator = (record) => {
     setShowConfirmModal({
       record,
       dispatch,
       children: (
         <p className="">
-          {record.isAdmin ? "Remove" : "Assign"} admin privilegdes{" "}
-          {record.isAdmin ? "from" : "to"}
+          {record.role.toLowerCase() === "moderator" ? "Remove" : "Assign"}{" "}
+          moderator privilegdes{" "}
+          {record.role.toLowerCase() === "moderator" ? "from" : "to"}
           <span className="text-fortrexorange font-bold mx-1">
             {record.firstName + " " + record.lastName}?
           </span>
         </p>
       ),
       onClick: () => {
-        if (record.isAdmin) {
-          removeAdmin({ id: record._id, dispatch, token, setShowConfirmModal });
+        if (record.role === "moderator") {
+          removeModerator({
+            id: record._id,
+            dispatch,
+            token,
+            setShowConfirmModal,
+          });
         } else {
-          makeAdmin({ id: record._id, dispatch, token, setShowConfirmModal });
+          makeModerator({
+            id: record._id,
+            dispatch,
+            token,
+            setShowConfirmModal,
+          });
         }
       },
       title: record.isAdmin ? "Remove Admin" : "Make Admin",
@@ -227,8 +245,6 @@ const Employee = () => {
       title: "Delete Employee",
       onCancel: () => setShowConfirmModal(false),
     });
-
-    console.log(showConfirmModal);
   };
 
   const ConfirmModal = ({
@@ -241,17 +257,13 @@ const Employee = () => {
     const footer = (
       <div className="mt-6 flex items-center gap-2 justify-end">
         <Button
-          className={
-            "px-2 border-[1.5px] border-fortrexorange text-fortrexorange hover:text-orange-800 hover:border-red-800 p-0"
-          }
+          type="secondary"
           text={"Cancel"}
           disabled={false}
           onClick={() => setShowConfirmModal(false)}
         />
         <Button
-          className={twMerge(
-            "px-2 border-[1.5px] bg-primaryblue hover:bg-hoverblue border-primaryblue hover:border-hoverblue p-0 text-white"
-          )}
+          type="primary"
           text={title?.toLowerCase().includes("admin") ? "Confirm" : "Delete"}
           disabled={false}
           onClick={onClick}
@@ -292,7 +304,7 @@ const Employee = () => {
     <div className="w-full p-10 pt-24">
       <PageHeader title={"Employees"} />
       <div className="mt-6">
-        <Table data={employees} columns={columns} />
+        {isLoading ? "Loading" : <Table data={employees} columns={columns} />}
         {showConfirmModal && (
           <ConfirmModal
             children={showConfirmModal.children}

@@ -8,12 +8,10 @@ export const addComment = async (req, res, next) => {
   const suggestionId = req.params.id;
 
   const getEmployee = await EmployeeModel.findById(userId);
-  // console.log(getEmployee);
   const getCompany = await CompanyModel.findById(userId);
 
   try {
     const user = req.employeeId ? getEmployee : getCompany;
-    //console.log(user.id);
     const {
       comments,
       upvotes,
@@ -27,16 +25,16 @@ export const addComment = async (req, res, next) => {
 
     const newComment = new CommentModel({
       userId: user.id,
-      user: user,
+      user: updatedUser,
       suggestionId: suggestionId,
       ...req.body,
     });
     const addComment = await newComment.save();
     await SuggestionModel.findByIdAndUpdate(req.params.id, {
-      $push: { comments: newComment },
+      $push: { comments: newComment._id },
     });
     await EmployeeModel.findByIdAndUpdate(req.employeeId, {
-      $push: { comments: newComment },
+      $push: { comments: newComment._id },
     });
     res.status(200).json({
       message: "Comment added successfully",

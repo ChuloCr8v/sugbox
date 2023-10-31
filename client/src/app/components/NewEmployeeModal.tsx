@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal } from "antd";
+import { Modal, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { FormGroup } from "./SmallerComponents";
 import Button from "./Button";
@@ -9,20 +9,22 @@ import { useRouter } from "next/navigation";
 import { hideNewEmployeeModal, stopLoading } from "../../../redux/modals";
 
 const NewEmployeeModal = () => {
+  const [role, setRole] = useState("");
   const { newEmployeeModal } = useSelector((state) => state.modals);
   const { employees } = useSelector((state) => state.employees);
   const { _id } = authData({ useSelector });
-  const [inputValue, setInputValue] = useState<{ firstName: string }>({});
-
-  console.log(newEmployeeModal);
+  const [inputValue, setInputValue] = useState<{
+    firstName: string;
+    role: string;
+  }>({});
 
   const dispatch = useDispatch();
   const token = getToken({ useSelector });
 
-  const handleClick = () => {
-    dispatch(stopLoading());
-    dispatch(hideNewEmployeeModal());
-  };
+  // const handleClick = () => {
+  //   dispatch(stopLoading());
+  //   dispatch(hideNewEmployeeModal());
+  // };
   const router = useRouter();
 
   const handleInputChange = (e) => {
@@ -43,6 +45,12 @@ const NewEmployeeModal = () => {
       router,
       employees,
     });
+  };
+
+  const handleChange = (value: string) => {
+    setRole(value);
+    setInputValue({ ...inputValue, ["role"]: value });
+    console.log(inputValue);
   };
 
   return (
@@ -69,6 +77,21 @@ const NewEmployeeModal = () => {
                 key={index}
               />
             ))}
+            <div className="flex flex-col items-start gap-3 -mt-2">
+              <label className="text-textcolor text-sm font-semibold">
+                Role
+              </label>
+              <Select
+                defaultValue="staff"
+                onChange={handleChange}
+                size="large"
+                className="w-full"
+                options={[
+                  { value: "staff", label: "Staff" },
+                  { value: "Moderator", label: "Moderator" },
+                ]}
+              />
+            </div>
             <Button
               text={"Submit"}
               className={

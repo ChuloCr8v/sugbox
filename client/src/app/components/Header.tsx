@@ -22,7 +22,7 @@ const Header = () => {
           <HeaderProfile />
         ) : (
           <Button
-            className="hover:text-primaryblue"
+            className="hover:text-primaryblue font-normal"
             text={"Sign In"}
             onClick={() => dispatch(showAccountModal())}
             disabled={false}

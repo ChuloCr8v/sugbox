@@ -26,7 +26,6 @@ export const deleteEmployee = async (req, res, next) => {
   try {
     const employee = await EmployeeModel.findOne({ _id: req.params.id });
     if (!employee) return res.status(401).json("Employee does not exist.");
-    console.log(employee.companyId.toString(16) + " " + req.user);
     if (employee.companyId.toString(16) !== req.user)
       return res.status(401).json("You can only delete your employee.");
     await EmployeeModel.findByIdAndDelete(req.params.id);

@@ -1,6 +1,7 @@
 import axios from "axios";
 import {
   hideAlert,
+  hideEditSuggestionModal,
   showAlert,
   startLoading,
   stopLoading,
@@ -8,9 +9,16 @@ import {
 import {
   approveSingleSuggestion,
   deleteSuggestionSuccess,
+  editSingleSuggestion,
+  getSingleUserSuggestions,
   rejectSingleSuggestion,
 } from "../../../redux/suggestion";
 import { useRouter } from "next/router";
+import {
+  stopSuggestionsLoading,
+  suggestionLoading,
+  suggestionsLoading,
+} from "../../../redux/loading";
 
 export const approveSuggestions = ({
   dispatch,
@@ -64,6 +72,51 @@ export const rejectSuggestion = ({
   dispatch(stopLoading());
 };
 
+export const editSuggestion = async ({
+  dispatch,
+  title,
+  suggestion,
+  isAnonymous,
+  token,
+  id,
+}) => {
+  dispatch(suggestionLoading(true));
+
+  try {
+    await axios.put(
+      `http://localhost:8000/api/suggestion/edit-suggestion/${id}`,
+      {
+        title,
+        suggestion,
+        isAnonymous,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    );
+    dispatch(editSingleSuggestion({ title, suggestion, isAnonymous }));
+    dispatch(
+      showAlert({
+        alertText: `Suggestion updated succesfully!`,
+        alertType: "success",
+      })
+    );
+    console.log("suggestion edited successfully");
+    dispatch(hideEditSuggestionModal());
+  } catch (error) {
+    console.log(error);
+    dispatch(
+      showAlert({
+        alertText: `unable to update suggestion. Please check your connection and try again!`,
+        alertType: "error",
+      })
+    );
+  }
+  dispatch(suggestionLoading(false));
+};
+
 export const deleteSuggestion = async ({
   dispatch,
   id,
@@ -79,19 +132,45 @@ export const deleteSuggestion = async ({
         Authorization: `${token}`,
       },
     });
+
     console.log("suggestion deleted successfully");
-    dispatch(deleteSuggestionSuccess({ id }));
     setShowActionModal(false);
+    dispatch(deleteSuggestionSuccess(id));
     dispatch(
       showAlert({
         alertText: `suggestion deleted successfully`,
         alertType: "success",
       })
     );
-    router.push("/dashboard");
+    window.history.back();
   } catch (error) {
     console.log(error);
   }
   dispatch(stopLoading());
   setTimeout(() => dispatch(hideAlert()), 3000);
+};
+
+export const getUserSuggestions = async ({ dispatch, userId, companyId }) => {
+  dispatch(suggestionsLoading());
+
+  try {
+    const getSuggestions = await axios.get(
+      `http://localhost:8000/api/suggestion/all/${companyId}`
+    );
+
+    const res = getSuggestions.data.filter(
+      (suggestion: { userId: string }) => suggestion.userId === userId
+    );
+
+    dispatch(getSingleUserSuggestions(res));
+  } catch (error) {
+    dispatch(
+      showAlert({
+        alertText: `Unable to fetch suggestions!`,
+        alertType: "error",
+      })
+    );
+    console.log(error);
+  }
+  dispatch(stopSuggestionsLoading());
 };

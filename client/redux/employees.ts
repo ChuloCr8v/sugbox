@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   employees: [],
+  singleEmployee: [],
   isLoading: false,
   error: false,
 };
@@ -20,6 +21,11 @@ export const employeeSlice = createSlice({
     },
     addEmployeeSuccess: (state, action) => {
       state.employees.push(action.payload);
+      state.isLoading = false;
+      state.error = false;
+    },
+    getSingleEmployee: (state, action) => {
+      state.singleEmployee = action.payload;
       state.isLoading = false;
       state.error = false;
     },
@@ -43,7 +49,7 @@ export const employeeSlice = createSlice({
       state.isLoading = false;
       state.error = true;
     },
-    giveAdminPrivilege: (state, action) => {
+    giveModeratorPrivilege: (state, action) => {
       const otherEmployees = state.employees.filter(
         (employee) => employee._id !== action.payload
       );
@@ -52,11 +58,11 @@ export const employeeSlice = createSlice({
       );
 
       if (updateEmployee) {
-        updateEmployee.isAdmin = true;
+        updateEmployee.role = "moderator";
       }
       [...otherEmployees, updateEmployee];
     },
-    removeAdminPrivilege: (state, action) => {
+    removeModeratorPrivilege: (state, action) => {
       const otherEmployees = state.employees.filter(
         (employee) => employee._id !== action.payload
       );
@@ -64,7 +70,7 @@ export const employeeSlice = createSlice({
         (employee: { _id: string }) => employee._id === action.payload
       );
       if (updateEmployee) {
-        updateEmployee.isAdmin = false;
+        updateEmployee.role = "staff";
       }
       [...otherEmployees, updateEmployee];
     },
@@ -76,10 +82,11 @@ export const {
   deleteEmployeeSuccess,
   deleteEmployeeFailure,
   getEmployee,
+  getSingleEmployee,
   getEmployeeSuccess,
   getEmployeeFailure,
   addEmployeeSuccess,
-  giveAdminPrivilege,
-  removeAdminPrivilege,
+  giveModeratorPrivilege,
+  removeModeratorPrivilege,
 } = employeeSlice.actions;
 export default employeeSlice.reducer;

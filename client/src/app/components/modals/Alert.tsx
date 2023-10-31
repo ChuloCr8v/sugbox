@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
@@ -15,6 +15,11 @@ const PopUpAlert = () => {
     }) => state.modals
   );
   const dispatch = useDispatch();
+  useEffect(() => {
+    if (alert) {
+      setTimeout(() => dispatch(hideAlert()), 3000);
+    }
+  }, [alert]);
 
   return (
     <div className="w-full flex justify-center ">

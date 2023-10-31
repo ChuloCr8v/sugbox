@@ -24,8 +24,6 @@ const FilterCards = (props: Props) => {
     { title: "rejected", number: rejected.length },
   ];
 
-  console.log(props.data);
-
   return (
     <div className="flex items-center gap-4 mt-4">
       {filters.map((d, index) => (

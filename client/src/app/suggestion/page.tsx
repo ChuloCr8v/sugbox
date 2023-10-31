@@ -8,7 +8,7 @@ import {
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaCheck, FaTimes, FaTrash, FaUserNinja } from "react-icons/fa";
+import { FaCheck, FaEdit, FaTimes, FaTrash, FaUserNinja } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
 import {
@@ -29,6 +29,9 @@ import CommentBox from "../components/CommentBox";
 import Comments from "../components/Comments";
 import { VoteComponent } from "../components/SmallerComponents";
 import ModalComponent from "../components/modals/Modal";
+import { showEditSuggestionModal } from "../../../redux/modals";
+import EditSuggestionModal from "../components/modals/EditSuggestionModal";
+import Loading from "../components/Loading";
 
 interface Props {
   searchParams: {
@@ -42,11 +45,31 @@ interface Props {
   };
 }
 
+export function icon(suggestion: {
+  status: string;
+}): import("react").ReactNode {
+  if (suggestion.status.toLowerCase() === "pending") {
+    return <QuestionCircleOutlined />;
+  } else if (suggestion.status.toLowerCase() === "approved") {
+    return <CheckOutlined />;
+  } else return <CloseCircleOutlined />;
+}
+
+export function statusColor(suggestion: {
+  status: string;
+}): import("tailwind-merge").ClassNameValue {
+  return suggestion.status.toLowerCase() === "pending"
+    ? "bg-orange-100 text-orange-500"
+    : suggestion.status.toLowerCase() === "approved"
+    ? "bg-green-100 text-green-500"
+    : "bg-red-100 text-red-500";
+}
+
 const page = (props: Props) => {
   const [comment, setComment] = useState("");
   const [showActionModal, setShowActionModal] = useState(false);
   const [btnTitle, setBtnTitle] = useState("");
-  const { isLoading } = useSelector((state) => state.modals);
+  const { loadingComments } = useSelector((state) => state.comments);
 
   const id = props.searchParams.id;
 
@@ -110,22 +133,6 @@ const page = (props: Props) => {
       icon: <FaTimes />,
     },
   ];
-
-  function statusColor(): import("tailwind-merge").ClassNameValue {
-    return suggestion.status.toLowerCase() === "pending"
-      ? "bg-orange-100 text-orange-500"
-      : suggestion.status.toLowerCase() === "approved"
-      ? "bg-green-100 text-green-500"
-      : "bg-red-100 text-red-500";
-  }
-
-  function icon(): import("react").ReactNode {
-    if (suggestion.status.toLowerCase() === "pending") {
-      return <QuestionCircleOutlined />;
-    } else if (suggestion.status.toLowerCase() === "approved") {
-      return <CheckOutlined />;
-    } else return <CloseCircleOutlined />;
-  }
 
   function suggester(): import("react").ReactNode {
     return suggestion.isAnonymous ? (
@@ -219,16 +226,21 @@ const page = (props: Props) => {
         title=<p>{btnTitle} Suggestion</p>
         onOk={() => handleActionBtnClick()}
       />
+      <EditSuggestionModal
+        titleValue={suggestion.title}
+        suggestionValue={suggestion.suggestion}
+        anonymous={suggestion.isAnonymous}
+      />
       <div className="">
         <p className="text-primaryblue font-bold text-[18px] capitalize flex items-center gap-2">
           {suggestion.title}{" "}
           <span
             className={twMerge(
               "text-[14px] text-black px-2 rounded ml-2 flex items-center gap-1 w-fit",
-              statusColor()
+              statusColor(suggestion)
             )}
           >
-            {icon()}
+            {icon(suggestion)}
             {suggestion.status}
           </span>
         </p>
@@ -271,9 +283,8 @@ const page = (props: Props) => {
                       btnProp.hoverColor
                     )}
                     text={
-                      <span className="flex items-center gap-3">
-                        {btnProp.btnTitle}
-                        <span>{btnProp.icon}</span>
+                      <span className="flex items-center gap-2">
+                        {btnProp.btnTitle} <span>{btnProp.icon}</span>
                       </span>
                     }
                     disabled={
@@ -290,25 +301,38 @@ const page = (props: Props) => {
                   />
                 ))}
 
-              {isAdmin ||
-                (user._id === suggestion.userId && (
-                  <Button
-                    className={twMerge(
-                      `w-fit text-white rounded-lg px-3 py-1 text-[12px] bg-red-500 hover:bg-red-700`
-                    )}
-                    text={
-                      <span className="flex items-center gap-3">
-                        Delete
-                        <FaTrash />
-                      </span>
-                    }
-                    disabled={suggestion.status.toLowerCase() === "approved"}
-                    onClick={() => {
-                      setShowActionModal(true);
-                      setBtnTitle("delete");
-                    }}
-                  />
-                ))}
+              {(isAdmin || user._id === suggestion.userId) && (
+                <Button
+                  className={twMerge(
+                    `w-fit text-white rounded-lg px-3 py-1 text-[12px] bg-red-500 hover:bg-red-700`
+                  )}
+                  text={
+                    <span className="flex items-center gap-2">
+                      Delete
+                      <FaTrash />
+                    </span>
+                  }
+                  disabled={suggestion.status.toLowerCase() === "approved"}
+                  onClick={() => {
+                    setShowActionModal(true);
+                    setBtnTitle("delete");
+                  }}
+                />
+              )}
+              {user._id === suggestion.userId && (
+                <Button
+                  className={twMerge(
+                    `w-fit text-white rounded-lg px-3 py-1 text-[12px] bg-primaryblue hover:bg-hoverblue`
+                  )}
+                  text={
+                    <span className="flex items-center gap-2">
+                      Edit <FaEdit />
+                    </span>
+                  }
+                  disabled={suggestion.status.toLowerCase() === "approved"}
+                  onClick={() => dispatch(showEditSuggestionModal(suggestion))}
+                />
+              )}
             </div>
           </div>
           <CommentBox
@@ -318,7 +342,7 @@ const page = (props: Props) => {
             setComment={setComment}
             comment={comment}
           />
-          {isLoading ? "Loading" : <Comments suggestionId={id} />}
+          {loadingComments ? <Loading /> : <Comments suggestionId={id} />}
         </div>
 
         <div className="col-span-1 p-4 bg-white shadow rounded-md flex flex-col items-center gap-2">

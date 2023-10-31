@@ -33,12 +33,38 @@ const Sidebar = () => {
       icon: <UsergroupAddOutlined />,
       role: "admin",
     },
+    {
+      title: "My Suggestions",
+      link: "/my-suggestions",
+      icon: <BulbOutlined />,
+      role: "staff",
+    },
     // {
     //   title: "Admin Suggestions",
     //   link: "/admin-suggestions",
     //   icon: <BulbOutlined />,
     // },
   ];
+
+  const MenuItem = ({ item }) => {
+    return (
+      <Link
+        href={item.link}
+        className={twMerge(
+          "w-full flex items-center gap-2  px-12 py-2 border-l-0 hover:border-l-4 border-transparent border-solid hover:border-primaryblue hover:text-primaryblue duration-200",
+          path.toLowerCase().includes(`${item.link}`) &&
+            "text-primaryblue border-primaryblue border-l-4"
+        )}
+      >
+        {item.icon}
+        {item.title}
+      </Link>
+    );
+  };
+
+  const adminMenu = navItems.filter((item) => item.role === "admin");
+  const staffMenu = navItems.filter((item) => item.role === "staff");
+  const allMenu = navItems.filter((item) => item.role === "all");
 
   return (
     <div
@@ -47,41 +73,13 @@ const Sidebar = () => {
         !auth && "hidden"
       )}
     >
-      <nav className="flex flex-col items-start">
-        {navItems.map((item, index) => (
-          <>
-            {item.role === "admin" && auth?.isAdmin && !auth?.firstName ? (
-              <Link
-                href={item.link}
-                key={index}
-                className={twMerge(
-                  "w-full flex items-center gap-2  px-12 py-2 border-l-0 hover:border-l-4 border-transparent border-solid hover:border-primaryblue hover:text-primaryblue duration-200",
-                  path.toLowerCase().includes(`${item.link}`) &&
-                    "text-primaryblue border-primaryblue border-l-4"
-                )}
-              >
-                {item.icon}
-                {item.title}
-              </Link>
-            ) : (
-              item.role !== "admin" && (
-                <Link
-                  href={item.link}
-                  key={index}
-                  className={twMerge(
-                    "w-full flex items-center gap-2  px-12 py-2 border-l-0 hover:border-l-4 border-transparent border-solid hover:border-primaryblue hover:text-primaryblue duration-200",
-                    path.toLowerCase().includes(`${item.link}`) &&
-                      "text-primaryblue border-primaryblue border-l-4"
-                  )}
-                >
-                  {item.icon}
-                  {item.title}
-                </Link>
-              )
-            )}
-          </>
-        ))}
-      </nav>
+      {allMenu.map((item, index) => (
+        <MenuItem item={item} key={index} />
+      ))}
+      {auth?.isAdmin &&
+        adminMenu.map((item, index) => <MenuItem item={item} key={index} />)}
+      {auth?.role === "staff" &&
+        staffMenu.map((item, index) => <MenuItem item={item} key={index} />)}
     </div>
   );
 };

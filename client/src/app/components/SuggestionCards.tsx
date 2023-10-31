@@ -2,7 +2,7 @@ import React from "react";
 import SuggestionCard from "./SuggestionCard";
 
 interface Props {
-  data: [];
+  data?: [];
 }
 
 const SuggestionCards = (props: Props) => {

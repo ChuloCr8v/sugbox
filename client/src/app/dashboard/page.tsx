@@ -7,11 +7,16 @@ import { useRouter } from "next/navigation";
 import PageHeader from "../components/PageHeader";
 import FilterCards from "../components/FilterCards";
 import SuggestionCards from "../components/SuggestionCards";
+import Loading from "../components/Loading";
+import { Button } from "antd";
 
 const Dashboard = () => {
+  const { loadingSuggestions } = useSelector((state) => state.suggestions);
   const { suggestions } = useSelector((state) => state.suggestions);
 
-  const [filteredSuggestions, setFilteredSuggestions] = useState(suggestions);
+  console.log(loadingSuggestions);
+
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [filter, setFilter] = useState("total");
   const auth = authData({ useSelector });
   const token = getToken({ useSelector });
@@ -25,29 +30,27 @@ const Dashboard = () => {
     return;
   }, [auth]);
 
-  console.log(auth);
-
   useEffect(() => {
     getSuggestions({ dispatch, token, companyId: companyId });
-    console.log(suggestions);
   }, []);
 
   useEffect(() => {
     if (filter === "total") {
       setFilteredSuggestions(suggestions);
     } else {
-      const statusFilter = suggestions.filter(
-        (s: { status: string }) => s.status === filter
-      );
-      setFilteredSuggestions(statusFilter);
+      setFilteredSuggestions(suggestions.filter((s) => s.status === filter));
     }
-  }, [filter]);
+  }, [filter, suggestions]);
 
   return (
     <div className="w-full p-10 pt-24">
       <PageHeader title="Dashboard" />
       <FilterCards data={suggestions} setFilter={setFilter} filter={filter} />
-      <SuggestionCards data={filteredSuggestions} />
+      {loadingSuggestions ? (
+        <Loading />
+      ) : (
+        <SuggestionCards data={filteredSuggestions} />
+      )}
     </div>
   );
 };

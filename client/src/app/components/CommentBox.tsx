@@ -16,6 +16,9 @@ type Props = {
 const CommentBox = (props: Props) => {
   const { newCommentModal } = useSelector((state) => state.modals);
   const dispatch = useDispatch();
+  const { addCommentLoading } = useSelector((state) => state.comments);
+
+  console.log(addCommentLoading);
 
   return (
     <div
@@ -32,19 +35,21 @@ const CommentBox = (props: Props) => {
       />
       <div className="flex items-center gap-4">
         <Button
-          className={"bg-primaryred hover:bg-red-600 text-white p-1"}
+          className={"bg-primaryred hover:bg-red-600 text-white "}
           text={"Cancel"}
           disabled={false}
+          //  loading={addCommentLoading}
           onClick={() => {
             props.setComment("");
             dispatch(hideNewCommentModal());
           }}
         />{" "}
         <Button
-          className={"bg-primaryblue text-white hover:bg-blue-600 p-1"}
+          className={"bg-primaryblue text-white hover:bg-blue-600 "}
           text={"Submit"}
           disabled={false}
           onClick={props.handleBtnClick}
+          loading={addCommentLoading}
         />
       </div>
     </div>

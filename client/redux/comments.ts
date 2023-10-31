@@ -8,24 +8,39 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   comments: [],
-  isLoading: false,
+  loadingComments: false,
+  addCommentLoading: false,
   error: false,
 };
 export const commentsSlice = createSlice({
   name: "comments",
   initialState,
   reducers: {
-    getComments: (state) => {
-      state.isLoading = true;
+    getCommentsStart: (state) => {
+      state.loadingComments = true;
       state.error = false;
     },
     getCommentsSuccess: (state, action) => {
       state.comments = action.payload;
-      state.isLoading = false;
+      state.loadingComments = false;
       state.error = false;
     },
-    addComment: (state, action) => {
+    getCommentsFailure: (state, action) => {
+      state.loadingComments = false;
+      state.error = true;
+    },
+    addCommentStart: (state) => {
+      state.addCommentLoading = true;
+      state.error = false;
+    },
+    addCommentSuccessful: (state, action) => {
       state.comments.push(action.payload);
+      state.error = false;
+      state.addCommentLoading = false;
+    },
+    addCommentFailure: (state) => {
+      state.error = true;
+      state.addCommentLoading = false;
     },
     // upvoteComment: (state, action) => {
     //   const id = action.payload.id;
@@ -63,5 +78,12 @@ export const commentsSlice = createSlice({
   },
 });
 
-export const { getCommentsSuccess, addComment } = commentsSlice.actions;
+export const {
+  getCommentsStart,
+  getCommentsSuccess,
+  getCommentsFailure,
+  addCommentStart,
+  addCommentSuccessful,
+  addCommentFailure,
+} = commentsSlice.actions;
 export default commentsSlice.reducer;

@@ -11,6 +11,7 @@ export interface inputProps {
   onchange: ChangeEventHandler<HTMLInputElement>;
   placeholder: string;
   name: string;
+  value?: string;
 }
 
 export interface formGroupProps {
@@ -20,6 +21,7 @@ export interface formGroupProps {
   placeholder: string;
   name: string;
   required?: boolean;
+  value?: string;
 }
 
 export interface ModalComponentProps {

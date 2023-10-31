@@ -30,10 +30,6 @@ export default function RootLayout({
   const router = useRouter();
   const auth = localStorage.getItem("auth");
 
-  console.log(auth);
-
-  console.log(auth);
-
   useEffect(() => {
     !auth && router.push("/login");
   }, []);
@@ -44,18 +40,18 @@ export default function RootLayout({
         <Providers>
           <PersistGate persistor={persistor} loading={null}>
             <Header />
-            <div className="bg-gray-100 flex items-center justify-center min-h-full">
+            <div className="flex items-start bg-gray-100">
               <SideBar />
-              <main className="min-h-screen w-full max-w-7xl">{children}</main>
+              <main className="h-screen w-full overflow-y-scroll">
+                <div className="container">{children}</div>
+              </main>
             </div>
             <AccountModal />
-
             {auth && (
               <>
                 <SuggestionModal />
                 <PopUpAlert />
                 <NewEmployeeModal />
-                <SuggestionModal />
               </>
             )}
           </PersistGate>
