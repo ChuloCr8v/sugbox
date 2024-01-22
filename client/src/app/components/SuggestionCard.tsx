@@ -5,24 +5,10 @@ import { FaCheck, FaThumbsDown, FaThumbsUp, FaTrash } from "react-icons/fa";
 import { Dropdown, MenuProps } from "antd";
 import Button from "./Button";
 import Link from "next/link";
+import { suggestionProps } from "../types";
 
 interface Props {
-  data: {
-    _id: number;
-    user: {
-      firstName: string;
-      lastName: string;
-      isAdmin: boolean;
-    };
-    isAnonymous: boolean;
-    suggester: string;
-    status: string;
-    title: string;
-    suggestion: string;
-    upVotes: Array<object>;
-    downVotes: Array<object>;
-    comments: Array<object>;
-  };
+  data: suggestionProps;
 }
 
 const SuggestionCard = (props: Props) => {
@@ -48,7 +34,8 @@ const SuggestionCard = (props: Props) => {
     >
       <div className="flex flex-col p-4 border-b border-gray-100 w-full row-span-1">
         <p className="font-semibold text-primaryblue capitalize">
-          {props.data.title.slice(0, 50)}
+          {props.data.title.slice(0, 30)}
+          {props.data.title.length > 30 && "..."}
         </p>
       </div>
       <div className="p-4 row-span-2 flex flex-col justify-between">

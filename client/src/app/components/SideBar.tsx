@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import {
   AppstoreAddOutlined,
   UsergroupAddOutlined,
@@ -7,10 +9,15 @@ import {
 } from "@ant-design/icons";
 import { twMerge } from "tailwind-merge";
 import { usePathname, useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authData } from "../../../api";
+import { FaArrowLeft } from "react-icons/fa";
+import { closeSideBar } from "../../../redux/sideBar";
 
 const Sidebar = () => {
+  const { isSideBarOpen } = useSelector((state) => state.sideBarOpener);
+  const dispatch = useDispatch();
+  console.log(isSideBarOpen);
   const auth = authData({ useSelector });
   const path = usePathname();
 
@@ -50,14 +57,15 @@ const Sidebar = () => {
     return (
       <Link
         href={item.link}
+        onClick={() => dispatch(closeSideBar())}
         className={twMerge(
-          "w-full flex items-center gap-2  px-12 py-2 border-l-0 hover:border-l-4 border-transparent border-solid hover:border-primaryblue hover:text-primaryblue duration-200",
+          "w-full flex items-center gap-2  pr-6 px-4 lg:px-10 py-2 border-l-4 hover:border-l-4 border-transparent border-solid hover:border-primaryblue hover:text-primaryblue duration-200",
           path.toLowerCase().includes(`${item.link}`) &&
-            "text-primaryblue border-primaryblue border-l-4"
+            "text-primaryblue border-primaryblue"
         )}
       >
         {item.icon}
-        {item.title}
+        <span>{item.title}</span>
       </Link>
     );
   };
@@ -67,20 +75,32 @@ const Sidebar = () => {
   const allMenu = navItems.filter((item) => item.role === "all");
 
   return (
-    <div
-      className={twMerge(
-        "bg-white min-h-screen w-[280px] pt-24 shadow-lg ",
-        !auth && "hidden"
-      )}
-    >
-      {allMenu.map((item, index) => (
-        <MenuItem item={item} key={index} />
-      ))}
-      {auth?.isAdmin &&
-        adminMenu.map((item, index) => <MenuItem item={item} key={index} />)}
-      {auth?.role === "staff" &&
-        staffMenu.map((item, index) => <MenuItem item={item} key={index} />)}
-    </div>
+    <>
+      {/* <div className="absolute top-24 left-0 bg-black text-white text-xl cursor-pointer rounded-r p-2">
+        <FaArrowLeft className={twMerge(!isSideBarOpen && "rotate-180")} />
+      </div> */}
+      <div
+        className={twMerge(
+          "fixed z-20 top-0 left-0 h-screen w-0 bg-black opacity-30 lg:hidden duration-200",
+          isSideBarOpen && "w-screen"
+        )}
+      ></div>
+      <div
+        className={twMerge(
+          "bg-white min-h-screen fixed lg:relative top-0 left-0 w-0 lg:w-[320px] pt-24 shadow-lg overflow-hidden z-30 duration-200",
+          !auth && "hidden",
+          isSideBarOpen && "w-[calc(100vw-20%)] "
+        )}
+      >
+        {allMenu.map((item, index) => (
+          <MenuItem item={item} key={index} />
+        ))}
+        {auth?.isAdmin &&
+          adminMenu.map((item, index) => <MenuItem item={item} key={index} />)}
+        {auth?.role === "staff" &&
+          staffMenu.map((item, index) => <MenuItem item={item} key={index} />)}
+      </div>
+    </>
   );
 };
 

@@ -28,18 +28,26 @@ const PageHeader = (props: Props) => {
       <div className="btns">
         <Button
           text="add employee"
-          className={twMerge("text-white", !auth.isAdmin && "hidden")}
+          className={twMerge("text-white", !auth?.isAdmin && "hidden")}
           type={"primary"}
           disabled={false}
           onClick={() => dispatch(showNewEmployeeModal())}
         />
 
         <Button
-          text="New Suggestion"
+          text={
+            <p className="">
+              <span className="hidden md:flex">New Suggestion</span>
+              <FaPlus className="md:hidden" />
+            </p>
+          }
           type="primary"
           disabled={false}
           onClick={() => dispatch(showNewSuggestionModal())}
-          className={twMerge("text-white", auth.isAdmin && "hidden")}
+          className={twMerge(
+            "text-white rounded md:rounded-full py-2",
+            auth?.isAdmin && "hidden"
+          )}
         />
       </div>
     </div>

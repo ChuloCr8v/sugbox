@@ -1,5 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import FilterCard from "./FilterCard";
+import { Dropdown, Button, MenuProps, Select } from "antd";
 
 interface Props {
   data: [];
@@ -24,16 +27,33 @@ const FilterCards = (props: Props) => {
     { title: "rejected", number: rejected.length },
   ];
 
+  const handleChange = (value: string) => {
+    props.setFilter(value);
+    console.log(value);
+  };
+
   return (
-    <div className="flex items-center gap-4 mt-4">
-      {filters.map((d, index) => (
-        <FilterCard
-          data={d}
-          key={index}
-          setFilter={props.setFilter}
-          filter={props.filter}
+    <div className="">
+      <div className="hidden lg:grid md:grid-cols-2 xl:grid-cols-4 items-center gap-4 mt-4">
+        {" "}
+        {filters.map((d, index) => (
+          <FilterCard
+            data={d}
+            key={index}
+            setFilter={props.setFilter}
+            filter={props.filter}
+          />
+        ))}
+      </div>
+      <div className="lg:hidden mt-4">
+        <Select
+          defaultValue="All"
+          style={{ width: 120 }}
+          onChange={handleChange}
+          options={filters.map((v) => ({ label: v.title, value: v.title }))}
+          className="w-full"
         />
-      ))}
+      </div>
     </div>
   );
 };

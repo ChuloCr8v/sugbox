@@ -17,7 +17,7 @@ const LoginForm = (props: Props) => {
   return (
     <form
       action=""
-      className="bg-white px-6 py-10 flex flex-col items-start gap-6 max-w-[400px] w-full shadow-xl rounded-md border-solid border-bordercolor border-2"
+      className="bg-white px-6 py-10 flex flex-col items-start gap-6 max-w-[400px] w-full shadow-lg rounded-xl border-solid border-bordercolor border-2 bg-morph"
     >
       {loginFormValues.map((v, index) => (
         <FormGroup
@@ -33,17 +33,17 @@ const LoginForm = (props: Props) => {
       <div className="w-full flex justify-between items-center">
         <Checkbox
           onChange={() => {}}
-          className="hover:text-primaryblue duration-200 font-semibold text-sm"
+          className="hover:text-primaryblue duration-200 text-base text-white"
         >
           Remember Me
         </Checkbox>
-        <p className="hover:text-primaryblue duration-200 cursor-pointer font-semibold text-sm text-textcolor">
+        <p className="hover:text-primaryblue duration-200 cursor-pointer text-[14.5px] text-white">
           Forgot Password
         </p>
       </div>
       <Button
         className={twMerge(
-          "w-full mt-6 bg-primaryblue hover:bg-hoverblue font-bold text-white uppercase py-3",
+          "w-full mt-6 hover:bg-[#031932] bg-hoverblue font-bold text-white uppercase py-3",
           props.disabled && "bg-gray-200 hover:bg-gray-200"
         )}
         text={"Login"}

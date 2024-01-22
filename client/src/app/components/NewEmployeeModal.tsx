@@ -12,7 +12,7 @@ const NewEmployeeModal = () => {
   const [role, setRole] = useState("");
   const { newEmployeeModal } = useSelector((state) => state.modals);
   const { employees } = useSelector((state) => state.employees);
-  const { _id } = authData({ useSelector });
+  const { _id } = authData({ useSelector }) || {};
   const [inputValue, setInputValue] = useState<{
     firstName: string;
     role: string;

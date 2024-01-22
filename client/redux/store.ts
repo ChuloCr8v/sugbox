@@ -7,6 +7,7 @@ import employees from "./employees";
 import suggestion from "./suggestion";
 import comments from "./comments";
 import loading from "./loading";
+import sideBarOpener from "./sideBar";
 
 const persistConfig = {
   key: "root",
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   suggestions: suggestion,
   comments: comments,
   loading: loading,
+  sideBarOpener: sideBarOpener,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

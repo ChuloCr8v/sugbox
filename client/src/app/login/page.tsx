@@ -48,8 +48,8 @@ const SignIn = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 h-screen w-screen overflow-hidden">
-      <div className="bg-gradient-to-r from-primaryblue to-cyan-700  hidden xl:flex flex-col items-center justify-center h-full w-full">
+    <div className="xl:grid grid-cols-2 h-screen w-screen overflow-hidden login bg-primaryblue xl:bg-transparent">
+      <div className="  hidden xl:flex flex-col items-center justify-center h-full w-full">
         <Image
           src={"/box.png"}
           height={300}
@@ -65,7 +65,7 @@ const SignIn = () => {
             : "Leave Your Suggestions"}
         </p>
       </div>
-      <div className=" flex items-center justify-center h-full w-full">
+      <div className=" flex items-center justify-center h-full w-full px-4">
         <Form
           handleInputChange={handleInputChange}
           formValues={loginFormValues}

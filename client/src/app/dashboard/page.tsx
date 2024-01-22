@@ -8,15 +8,20 @@ import PageHeader from "../components/PageHeader";
 import FilterCards from "../components/FilterCards";
 import SuggestionCards from "../components/SuggestionCards";
 import Loading from "../components/Loading";
-import { Button } from "antd";
+import { suggestionProps } from "../types";
 
 const Dashboard = () => {
-  const { loadingSuggestions } = useSelector((state) => state.suggestions);
-  const { suggestions } = useSelector((state) => state.suggestions);
+  const { loadingSuggestions } = useSelector(
+    (state: { suggestions: { loadingSuggestions: boolean } }) =>
+      state.suggestions
+  );
+  const { suggestions } = useSelector(
+    (state: { suggestions: { suggestions: [] } }) => state.suggestions
+  );
 
-  console.log(loadingSuggestions);
-
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<
+    Array<suggestionProps>
+  >([]);
   const [filter, setFilter] = useState("total");
   const auth = authData({ useSelector });
   const token = getToken({ useSelector });
@@ -38,12 +43,16 @@ const Dashboard = () => {
     if (filter === "total") {
       setFilteredSuggestions(suggestions);
     } else {
-      setFilteredSuggestions(suggestions.filter((s) => s.status === filter));
+      setFilteredSuggestions(
+        suggestions.filter((s: { status: string }) => s.status === filter)
+      );
     }
   }, [filter, suggestions]);
 
+  console.log(suggestions);
+
   return (
-    <div className="w-full p-10 pt-24">
+    <div className="w-full p-4 pt-24">
       <PageHeader title="Dashboard" />
       <FilterCards data={suggestions} setFilter={setFilter} filter={filter} />
       {loadingSuggestions ? (

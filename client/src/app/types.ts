@@ -44,3 +44,20 @@ export interface employeeSignupProps {
   token: string;
   employees: [];
 }
+
+export interface suggestionProps {
+  _id: number;
+  user: {
+    firstName: string;
+    lastName: string;
+    isAdmin: boolean;
+  };
+  isAnonymous: boolean;
+  suggester: string;
+  status: string;
+  title: string;
+  suggestion: string;
+  upVotes: Array<object>;
+  downVotes: Array<object>;
+  comments: Array<object>;
+}

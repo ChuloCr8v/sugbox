@@ -16,13 +16,14 @@ import { useRouter } from "next/navigation";
 import Button from "../components/Button";
 import { twMerge } from "tailwind-merge";
 import { ColumnsType } from "antd/es/table";
-import { Dropdown, MenuProps, Modal } from "antd";
+import { Dropdown, MenuProps, Modal, Tag } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
   EllipsisOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons";
+import Link from "next/link";
 
 interface DataType {
   email: string;
@@ -52,12 +53,12 @@ const Employee = () => {
   const dispatch = useDispatch();
   const userData = authData({ useSelector });
   const { employees } = useSelector(
-    (state: { employees: { employees: {} } }) => state.employees
+    (state: { employees: { employees: [] } }) => state.employees
   );
   const token = getToken({ useSelector });
   const auth = authData({ useSelector });
   const router = useRouter();
-  const id = userData.companyId ? userData.companyId : userData._id;
+  const id = userData?.companyId ? userData?.companyId : userData?._id;
 
   if (!auth) {
     return router.push("/login");
@@ -141,10 +142,17 @@ const Employee = () => {
       dataIndex: "name",
       key: "name",
       render: (_: ReactNode, record) => (
-        <p className="capitalize">
-          {" "}
+        <Link
+          href={{
+            pathname: "/profile",
+            query: {
+              id: record._id,
+            },
+          }}
+          className="capitalize font-bold text-primaryblue"
+        >
           {record.firstName + " " + record.lastName}
-        </p>
+        </Link>
       ),
     },
     {
@@ -300,11 +308,74 @@ const Employee = () => {
   //   );
   // };
 
+  const EmployeeCard = (data: {
+    data: {
+      firstName: string;
+      lastName: string;
+      role: string;
+      email: string;
+      suggestions: Array;
+    };
+  }) => {
+    return (
+      <div className="w-full bg-white rounded p-4 mb-4 shadow relative flex items-start gap-4 justify-between">
+        <div className="flex items-center gap-6">
+          <div
+            className={twMerge(
+              "avatar bg-primaryred rounded-full p-2 w-20 h-20 flex items-center justify-center relative",
+              data.data.role === "moderator" && "bg-primaryblue"
+            )}
+          >
+            <p className=" text-white font-semibold capitalize text-4xl ">
+              {data.data.firstName.slice(0, 1) + data.data.lastName.slice(0, 1)}
+            </p>
+          </div>
+          <div className="">
+            <p className="font-semibold">
+              {data.data.firstName + " " + data.data.lastName}
+            </p>
+            <p className="">{data.data.email}</p>
+            <span
+              className={twMerge(
+                "role rounded-full text-sm font-semibold text-primaryred capitalize",
+                data.data.role.toLowerCase() === "moderator" &&
+                  "text-primaryblue "
+              )}
+            >
+              {data.data.role === "false" ? "Staff" : data.data.role}
+            </span>
+          </div>
+        </div>
+        <div className="">
+          {" "}
+          <DropDown data={data.data} />
+        </div>
+      </div>
+    );
+  };
+
+  console.log(employees);
+
   return (
-    <div className="w-full p-10 pt-24">
+    <div className="w-full p-4 pt-24">
       <PageHeader title={"Employees"} />
       <div className="mt-6">
-        {isLoading ? "Loading" : <Table data={employees} columns={columns} />}
+        {isLoading ? (
+          "Loading"
+        ) : (
+          <div className="w-full">
+            <div className="hidden lg:flex w-full">
+              {" "}
+              <Table data={employees} columns={columns} />
+            </div>
+            <div className="lg:hidden w-full md:grid grid-cols-2 gap-4">
+              {employees.map((e, k) => (
+                <EmployeeCard data={e} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {showConfirmModal && (
           <ConfirmModal
             children={showConfirmModal.children}

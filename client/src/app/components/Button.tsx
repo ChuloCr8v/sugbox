@@ -33,7 +33,7 @@ const Button = (props: ButtonProps) => {
           disabled={props.disabled}
           onClick={props.onClick}
           className={twMerge(
-            " py-0.5 px-4 rounded-full font-bold duration-300 text-normal capitalize",
+            " py-2 px-4 rounded-full font-bold duration-300 text-sm capitalize",
             props.type === "primary"
               ? "bg-primaryblue hover:bg-blue-400 text-white"
               : props.type === "secondary" &&

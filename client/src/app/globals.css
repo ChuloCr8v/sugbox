@@ -21,3 +21,47 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+.ant-select {
+  width: 100% !important;
+}
+
+:where(.css-dev-only-do-not-override-nnuwmp).ant-select-single:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  height: 45px !important;
+}
+
+:where(.css-dev-only-do-not-override-nnuwmp).ant-select-single
+  .ant-select-selector
+  .ant-select-selection-item {
+  display: flex;
+  align-items: center;
+}
+
+:where(.css-dev-only-do-not-override-nnuwmp).ant-table-wrapper {
+  width: 100%;
+}
+
+.login,
+.signup {
+  background-image: url("/bgg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Glassmorphism card effect */
+.bg-morph {
+  backdrop-filter: blur(4px) saturate(200%);
+  -webkit-backdrop-filter: blur(4px) saturate(200%);
+  background-color: rgba(192, 192, 192, 0.41);
+  border-radius: 12px;
+  border: 1px solid rgba(209, 213, 219, 0.3);
+}
+
+@media (min-width: 768px) {
+  .ant-select {
+    width: 150px !important;
+  }
+}

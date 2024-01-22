@@ -8,9 +8,7 @@ import { labelProps, inputProps, formGroupProps } from "../types";
 
 export const Label = (props: labelProps) => {
   return (
-    <label className="text-textcolor text-sm font-semibold">
-      {props.title}
-    </label>
+    <label className="text-white text-base font-semibold">{props.title}</label>
   );
 };
 
@@ -19,7 +17,7 @@ export const Input = (props: inputProps) => {
     <input
       name={props.name}
       type={props.type}
-      className="w-full border-solid border-2 border-bordercolor rounded-md px-3 py-3 hover:border-primaryblue duration-200 focus:outline-primaryblue"
+      className="w-full border-solid border-[1.5px] border-gray-300 rounded-md px-3 py-2 hover:border-primaryblue duration-200 focus:outline-primaryblue bg-transparent placeholder:text-gray-300"
       onChange={props.onchange}
       placeholder={props.placeholder}
       required={props.required}

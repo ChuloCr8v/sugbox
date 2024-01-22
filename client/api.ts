@@ -101,7 +101,7 @@ interface voteProps {
 
 export const authData = ({ useSelector }: any) => {
   const user = useSelector((state: authDataState) => state.auth);
-  const userDetails = user.auth.others;
+  const userDetails = user?.auth?.others;
 
   return userDetails;
 };
@@ -294,7 +294,7 @@ export const getOneEmployee = async ({ dispatch, id }) => {
     const employee = await axios.get(
       `http://localhost:8000/api/employee/${id}`
     );
-
+    console.log(employee.data);
     dispatch(getSingleEmployee(employee.data));
   } catch (error) {
     dispatch(getEmployeeFailure());

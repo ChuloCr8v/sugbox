@@ -42,8 +42,10 @@ export default function RootLayout({
             <Header />
             <div className="flex items-start bg-gray-100">
               <SideBar />
-              <main className="h-screen w-full overflow-y-scroll">
-                <div className="container">{children}</div>
+              <main className="h-screen w-full overflow-y-scroll flex flex-col items-center">
+                <div className="max-w-[1440px] w-full flex flex-col items-center">
+                  {children}
+                </div>
               </main>
             </div>
             <AccountModal />

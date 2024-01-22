@@ -15,7 +15,7 @@ const App: React.FC = (props) => {
   const dispatch = useDispatch();
   const token = getToken({ useSelector });
   const user = authData({ useSelector });
-  const id = user.companyId;
+  const id = user?.companyId;
 
   const { newSuggestionModal } = useSelector((state) => state.modals);
 

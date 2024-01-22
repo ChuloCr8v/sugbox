@@ -15,10 +15,14 @@ const page = () => {
 
   const dispatch = useDispatch();
   const auth = authData({ useSelector });
-  const userId = auth._id;
-  const companyId = auth.companyId;
+  const userId = auth?._id;
+  const companyId = auth?.companyId;
 
   const { singleUserSuggestions } = useSelector((state) => state.suggestions);
+  const { loadingSuggestions } = useSelector(
+    (state: { suggestions: { loadingSuggestions: boolean } }) =>
+      state.suggestions
+  );
 
   useEffect(() => {
     getUserSuggestions({ dispatch, userId, companyId });
@@ -35,14 +39,18 @@ const page = () => {
   }, [filter, singleUserSuggestions]);
 
   return (
-    <div className="w-full p-10 pt-24">
+    <div className="w-full p-4 pt-24">
       <PageHeader title="My Suggestions" />
       <FilterCards
         data={singleUserSuggestions}
         setFilter={setFilter}
         filter={filter}
       />
-      <SuggestionCards data={filteredSuggestions} />
+      {loadingSuggestions ? (
+        <Loading />
+      ) : (
+        <SuggestionCards data={filteredSuggestions} />
+      )}{" "}
     </div>
   );
 };

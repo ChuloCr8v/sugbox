@@ -86,7 +86,7 @@ const FilterCard = (props: Props) => {
     <button
       onClick={() => props.setFilter(props.data.title)}
       className={twMerge(
-        `group max-w-500 w-full shadow bg-white rounded-md flex items-center justify-between px-4 py-6 duration-200`,
+        `group max-w-500 w-full shadow bg-white rounded-md flex items-center justify-between p-4 py-2 duration-200`,
         setBg(),
         hoverBg(props.data.title)
       )}

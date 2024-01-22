@@ -35,10 +35,11 @@ const HeaderProfile = () => {
   };
 
   const handleLogOut = () => {
-    router.push("/login");
+    console.log("logging out");
     dispatch(logOut());
+    router.push("/login");
     localStorage.removeItem("auth");
-    return;
+    //return;
   };
 
   const dropDownItems = [
@@ -47,14 +48,13 @@ const HeaderProfile = () => {
       link: "/profile",
       icon: <AppstoreAddOutlined />,
     },
+    // {
+    //   label: "Settings",
+    //   link: "/dashboard",
+    //   icon: <SettingOutlined />,
+    // },
     {
-      label: "Settings",
-      link: "/dashboard",
-      icon: <SettingOutlined />,
-    },
-    {
-      label: "Logout",
-      onclick: handleLogOut,
+      label: <button onClick={handleLogOut}>LogOut</button>,
       icon: <LogoutOutlined />,
     },
   ];
@@ -63,10 +63,16 @@ const HeaderProfile = () => {
     return (
       <div
         className={twMerge(
-          "flex flex-col items-start bg-white shadow-md rounded-md w-full absolute top-16 overflow-hidden duration-200",
+          "flex flex-col items-start bg-white shadow-md rounded-md w-[200px] right-0 absolute top-[50px] overflow-hidden duration-200",
           dropDownActive ? "h-fit" : "h-0"
         )}
       >
+        <div
+          className={twMerge(
+            "fixed -z-10 h-screen w-screen left-0 top-0 bg-black opacity-5",
+            !dropDownActive && "hidden"
+          )}
+        ></div>
         <>
           {dropDownItems.map((item, index) =>
             item.link ? (
@@ -102,15 +108,15 @@ const HeaderProfile = () => {
   return (
     <div
       onClick={() => setDropDownActive(!dropDownActive)}
-      className="flex items-center gap-16 group group-hover:text-primaryblue cursor-pointer relative"
+      className="flex items-center gap-2 md:gap-16 group group-hover:text-primaryblue cursor-pointer relative"
     >
       <div className="flex items-center gap-4">
         <div className="h-8 w-8 rounded-full bg-primaryblue text-white flex items-center justify-center uppercase text-base font-bold ">
           {avatar()}
         </div>{" "}
-        <p className="text-textcolor font-semibold text-base group-hover:text-primaryblue duration-200">
+        <p className="hidden md:flex text-textcolor font-semibold text-base group-hover:text-primaryblue duration-200">
           {username()}{" "}
-          {userDetails.isAdmin && (
+          {userDetails?.isAdmin && (
             <span className="bg-blue-100 text-primaryblue border border-primaryblue rounded-full px-4 py-0.5  ml-2 text-[12px]">
               Admin
             </span>

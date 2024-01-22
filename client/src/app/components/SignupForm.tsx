@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 
 interface Props {
   handleInputChange: any;
-  formValues: Object;
+  formValues: [];
   handleSubmit: () => void;
   disabled: boolean;
 }
@@ -14,13 +14,17 @@ const SignupForm = (props: Props) => {
   return (
     <form
       action=""
-      className="bg-white px-6 py-10 flex flex-col items-start gap-6 max-w-[400px] w-full shadow-xl rounded-md border-solid border-bordercolor border-2"
+      className="bg-morph px-6 py-10 flex flex-col items-start gap-6 max-w-[400px] w-full shadow-xl rounded-md border-solid border-bordercolor border-2"
     >
       {props.formValues.map(
         (
           v: {
-            required: boolean; label: string; type: string; placeholder: string; name: string 
-},
+            required: boolean;
+            label: string;
+            type: string;
+            placeholder: string;
+            name: string;
+          },
           index: React.Key
         ) => (
           <FormGroup

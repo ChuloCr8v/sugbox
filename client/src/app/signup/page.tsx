@@ -52,8 +52,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen">
-      <div className="bg-gradient-to-r from-fortrexorange to-orange-700 hidden xl:flex flex-col items-center justify-center h-full w-full">
+    <div className="flex items-center justify-center h-screen w-screen signup">
+      <div className="hidden xl:flex flex-col items-center justify-center h-full w-full">
         <Image
           src={"/box.png"}
           height={300}

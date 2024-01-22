@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Comment from "./Comment";
-import { getComment, getComments, getToken } from "../../../api";
+import { getComments, getToken } from "../../../api";
 import { useDispatch, useSelector } from "react-redux";
 import { comment } from "postcss";
 import Button from "./Button";
@@ -17,7 +17,7 @@ const Comments = (props: Props) => {
 
   useEffect(() => {
     getComments({ token, suggestionId: props.suggestionId, dispatch });
-  }, []);
+  }, [props.suggestionId]);
 
   return (
     <div className="bg-white shadow rounded-md">
@@ -33,9 +33,13 @@ const Comments = (props: Props) => {
         />
       </div>
       <div className="px-4">
-        {comments.map((comment: { _id?: any; comment: string }) => (
-          <Comment data={comment} key={comment._id} />
-        ))}
+        {!comments.length ? (
+          <span className="my-2 block">No comments yet</span>
+        ) : (
+          comments.map((comment: { _id?: any; comment: string }) => (
+            <Comment data={comment} key={comment._id} />
+          ))
+        )}
       </div>
     </div>
   );
