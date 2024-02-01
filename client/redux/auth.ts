@@ -10,7 +10,7 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    startLogin: (state, action) => {
+    startLogin: (state) => {
       state.isLoading = true;
       state.error = false;
     },
@@ -19,7 +19,7 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.error = false;
     },
-    loginFailure: (state, action) => {
+    loginFailure: (state) => {
       state.error = true;
       state.isLoading = false;
     },
@@ -30,7 +30,7 @@ export const authSlice = createSlice({
     setLoginRole: (state, action) => {
       state.loginRole = action.payload;
     },
-    employeeStartLogin: (state, action) => {
+    employeeStartLogin: (state) => {
       state.isLoading = true;
       state.error = false;
     },

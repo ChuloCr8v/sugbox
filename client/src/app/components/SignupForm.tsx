@@ -8,6 +8,7 @@ interface Props {
   formValues: [];
   handleSubmit: () => void;
   disabled: boolean;
+  isLoading: boolean
 }
 
 const SignupForm = (props: Props) => {
@@ -46,8 +47,9 @@ const SignupForm = (props: Props) => {
         )}
         text={"SignUp"}
         onClick={props.handleSubmit}
-        disabled={props.disabled}
-      />
+        disabled={props.disabled} url={""} 
+        loading={props.isLoading}
+        />
     </form>
   );
 };

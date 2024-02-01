@@ -76,6 +76,7 @@ const Employee = () => {
       lastName: string;
       _id: string;
       isAdmin: boolean;
+      role: string
     };
   }) => {
     const items: MenuProps["items"] = [
@@ -83,13 +84,13 @@ const Employee = () => {
         key: "1",
         label: (
           <div className="flex flex-col items-start ">
-            <Button
+            {/* <Button
               className={twMerge("h-fit px-0 py-0 p-0 w-fit")}
               text={
                 <div className="px-4 py-2 w-full flex items-center gap-4 hover:bg-blue-50">
                   <UserSwitchOutlined />
                   <span className="">
-                    {data.role.toLowerCase() === "moderator"
+                    {data?.role?.toLowerCase() === "moderator"
                       ? "remove moderator"
                       : "Make Moderator"}
                   </span>
@@ -97,12 +98,12 @@ const Employee = () => {
               }
               disabled={false}
               onClick={() => handleMakeModerator(data)}
-            />
+            /> */}
 
             <Button
               className={twMerge("w-full h-fit p-0")}
               text={
-                <div className="px-4 py-2 w-full flex items-center gap-4 hover:bg-blue-50">
+                <div className="py-2 w-full flex items-center gap-4 hover:bg-blue-50 font-normal">
                   <DeleteOutlined />
                   <span className="">Delete Employee</span>
                 </div>
@@ -114,7 +115,7 @@ const Employee = () => {
             <Button
               className={twMerge("w-full h-fit p-0")}
               text={
-                <div className="px-4 py-2 w-full flex items-center gap-4 hover:bg-blue-50">
+                <div className="py-2 w-full flex items-center gap-4 hover:bg-blue-50 font-normal">
                   <EditOutlined />
                   <span className="">Edit Employee</span>
                 </div>
@@ -190,41 +191,41 @@ const Employee = () => {
     },
   ];
 
-  const handleMakeModerator = (record) => {
-    setShowConfirmModal({
-      record,
-      dispatch,
-      children: (
-        <p className="">
-          {record.role.toLowerCase() === "moderator" ? "Remove" : "Assign"}{" "}
-          moderator privilegdes{" "}
-          {record.role.toLowerCase() === "moderator" ? "from" : "to"}
-          <span className="text-fortrexorange font-bold mx-1">
-            {record.firstName + " " + record.lastName}?
-          </span>
-        </p>
-      ),
-      onClick: () => {
-        if (record.role === "moderator") {
-          removeModerator({
-            id: record._id,
-            dispatch,
-            token,
-            setShowConfirmModal,
-          });
-        } else {
-          makeModerator({
-            id: record._id,
-            dispatch,
-            token,
-            setShowConfirmModal,
-          });
-        }
-      },
-      title: record.isAdmin ? "Remove Admin" : "Make Admin",
-      onCancel: () => setShowConfirmModal(false),
-    });
-  };
+  // const handleMakeModerator = (record) => {
+  //   setShowConfirmModal({
+  //     record,
+  //     dispatch,
+  //     children: (
+  //       <p className="">
+  //         {record.role.toLowerCase() === "moderator" ? "Remove" : "Assign"}{" "}
+  //         moderator privilegdes{" "}
+  //         {record.role.toLowerCase() === "moderator" ? "from" : "to"}
+  //         <span className="text-fortrexorange font-bold mx-1">
+  //           {record.firstName + " " + record.lastName}?
+  //         </span>
+  //       </p>
+  //     ),
+  //     onClick: () => {
+  //       if (record.role === "moderator") {
+  //         removeModerator({
+  //           id: record._id,
+  //           dispatch,
+  //           token,
+  //           setShowConfirmModal,
+  //         });
+  //       } else {
+  //         makeModerator({
+  //           id: record._id,
+  //           dispatch,
+  //           token,
+  //           setShowConfirmModal,
+  //         });
+  //       }
+  //     },
+  //     title: record.isAdmin ? "Remove Admin" : "Make Admin",
+  //     onCancel: () => setShowConfirmModal(false),
+  //   });
+  // };
 
   const handleDeleteModal = (record: {
     firstName: string;
@@ -292,21 +293,21 @@ const Employee = () => {
     );
   };
 
-  // const EditEmployeeModal = () => {
+  const EditEmployeeModal = (data) => {
 
-  //   const [modalOpen, setModalOpen] = useState(false)
+    const [modalOpen, setModalOpen] = useState(true)
 
-  //   return (
-  //     <Modal
-  //       title="Basic Modal"
-  //       open={modalOpen}
+    return (
+      <Modal
+        title="Basic Modal"
+        open={true}
 
-  //       onCancel={() => setModalOpen(false)}
-  //     >
-
-  //     </Modal>
-  //   );
-  // };
+        onCancel={() => setModalOpen(false)}
+      >
+        <p className="">Editing {data.firstName + " " + data.lastName}</p>
+      </Modal>
+    );
+  };
 
   const EmployeeCard = (data: {
     data: {
@@ -314,7 +315,7 @@ const Employee = () => {
       lastName: string;
       role: string;
       email: string;
-      suggestions: Array;
+      suggestions: Array<Object>;
     };
   }) => {
     return (
@@ -339,7 +340,7 @@ const Employee = () => {
               className={twMerge(
                 "role rounded-full text-sm font-semibold text-primaryred capitalize",
                 data.data.role.toLowerCase() === "moderator" &&
-                  "text-primaryblue "
+                "text-primaryblue "
               )}
             >
               {data.data.role === "false" ? "Staff" : data.data.role}
@@ -368,9 +369,12 @@ const Employee = () => {
               {" "}
               <Table data={employees} columns={columns} />
             </div>
-            <div className="lg:hidden w-full md:grid grid-cols-2 gap-4">
+            <div className=" w-full md:grid grid-cols-2 gap-4">
               {employees.map((e, k) => (
-                <EmployeeCard data={e} />
+                <>
+                  <EditEmployeeModal data={e.data} />
+                  <EmployeeCard data={e} />
+                </>
               ))}
             </div>
           </div>

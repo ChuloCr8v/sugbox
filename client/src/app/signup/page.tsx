@@ -4,15 +4,15 @@ import Image from "next/image";
 import { Dispatch, useState } from "react";
 import Form from "../components/SignupForm";
 import { showAlert, startLoading, stopLoading } from "../../../redux/modals";
-import { useDispatch, AnyAction } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signupFormValues } from "../data";
-import { signUp } from "../../../api";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { signUp } from "../../../api/auth";
 
 interface inputValueProps {
   signUpData: {};
-  dispatch: Dispatch<AnyAction>;
+ 
   router: AppRouterInstance;
   companyName: string;
   companyEmail: string;
@@ -22,10 +22,12 @@ interface inputValueProps {
 
 const Signup = () => {
   const [inputValue, setInputValue] = useState<inputValueProps>({});
+  const {isLoading} = useSelector((state: {employees: {isLoading: boolean}}) => state.employees)
+
 
   const dispatch = useDispatch();
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: { preventDefault: () => void; target: { name: string; value: string; }; }) => {
     e.preventDefault();
     setInputValue({ ...inputValue, [e.target.name]: e.target.value });
   };
@@ -65,7 +67,7 @@ const Signup = () => {
           Welcome To Suggbox
         </h2>
         <p className="text-lg text-white mt-1">
-          Signup To Start Leaving Your Awesome Suggestions
+         Add Employees To Start Getting Suggestions
         </p>
       </div>
       <div className="flex items-center justify-center h-screen w-full overflow-y-scroll p-4 pt-48 pb-20 xl:pt-36">
@@ -73,7 +75,8 @@ const Signup = () => {
           handleInputChange={handleInputChange}
           formValues={signupFormValues}
           handleSubmit={handleSubmit}
-          disabled={checkValues()}
+          disabled={checkValues() || isLoading}
+          isLoading={isLoading}
         />
       </div>
     </div>

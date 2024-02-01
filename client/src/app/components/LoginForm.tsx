@@ -2,17 +2,18 @@ import { Checkbox } from "antd";
 import { FormGroup } from "./SmallerComponents";
 import Button from "./Button";
 import { loginFormValues } from "../data";
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, useContext, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { useSelector } from "react-redux";
 
 interface Props {
   handleInputChange: ChangeEventHandler<HTMLInputElement>;
   disabled: boolean;
   handleSubmit: (arg0: {}) => void;
+  isLoading: boolean
 }
 
 const LoginForm = (props: Props) => {
-  const [inputValue, setInputValue] = useState({});
 
   return (
     <form
@@ -49,7 +50,7 @@ const LoginForm = (props: Props) => {
         text={"Login"}
         onClick={props.handleSubmit}
         disabled={props.disabled}
-      />
+        loading={props.isLoading} url={""}      />
     </form>
   );
 };

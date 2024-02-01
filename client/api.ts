@@ -4,7 +4,7 @@ import { employeeSignupProps } from "@/app/types";
 import axios from "axios";
 import { NextRouter } from "next/router";
 import { AnyAction, Dispatch } from "redux";
-import { loginSuccess } from "./redux/auth";
+import { loginFailure, loginSuccess, startLogin } from "./redux/auth";
 import {
   addEmployeeSuccess,
   deleteEmployeeFailure,
@@ -154,7 +154,7 @@ export const signUp = async ({
 };
 
 export const signIn = async ({ dispatch, loginData, router }: Props) => {
-  dispatch(startLoading());
+  dispatch(startLogin());
 
   try {
     const authDetails = await axios.put(
@@ -186,7 +186,7 @@ export const signIn = async ({ dispatch, loginData, router }: Props) => {
       })
     );
   }
-  dispatch(stopLoading());
+  dispatch(loginFailure());
   setTimeout(() => dispatch(hideAlert()), 3000);
 };
 
@@ -195,7 +195,8 @@ export const employeeSignIn = async ({
   loginData,
   router,
 }: Props) => {
-  dispatch(startLoading());
+  
+  dispatch(startLogin());
 
   try {
     const authDetails = await axios.put(
@@ -215,9 +216,9 @@ export const employeeSignIn = async ({
     );
 
     localStorage.setItem("auth", auth);
-
     router.push("/dashboard");
   } catch (error) {
+    dispatch(loginFailure())
     console.log("error");
     dispatch(
       showAlert({
@@ -226,7 +227,6 @@ export const employeeSignIn = async ({
       })
     );
   }
-  dispatch(stopLoading());
   setTimeout(() => dispatch(hideAlert()), 3000);
 };
 
@@ -238,7 +238,7 @@ export const employeeSignUp = async ({
   id,
   token,
 }: employeeSignupProps) => {
-  dispatch(startLoading());
+  dispatch(startLogin());
   try {
     const employees = await axios.post(
       `http://localhost:8000/api//auth/employee/new-employee/${id}`,
@@ -270,7 +270,7 @@ export const employeeSignUp = async ({
       })
     );
   }
-  dispatch(stopLoading());
+  dispatch(loginFailure());
   setTimeout(() => dispatch(hideAlert()), 3000);
 };
 

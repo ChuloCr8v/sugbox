@@ -19,10 +19,18 @@ export const employeeSlice = createSlice({
       state.isLoading = false;
       state.error = false;
     },
+    addEmployeeStart: (state) => {
+      state.isLoading = true;
+      state.error = false;
+    },
     addEmployeeSuccess: (state, action) => {
       state.employees.push(action.payload);
       state.isLoading = false;
       state.error = false;
+    },
+    addEmployeeFailure: (state) => {
+      state.isLoading = false;
+      state.error = true;
     },
     getSingleEmployee: (state, action) => {
       state.singleEmployee = action.payload;
@@ -49,31 +57,31 @@ export const employeeSlice = createSlice({
       state.isLoading = false;
       state.error = true;
     },
-    giveModeratorPrivilege: (state, action) => {
-      const otherEmployees = state.employees.filter(
-        (employee) => employee._id !== action.payload
-      );
-      const updateEmployee = state.employees.find(
-        (employee: { _id: string }) => employee._id === action.payload
-      );
+    // giveModeratorPrivilege: (state, action) => {
+    //   const otherEmployees = state.employees.filter(
+    //     (employee) => employee._id !== action.payload
+    //   );
+    //   const updateEmployee = state.employees.find(
+    //     (employee: { _id: string }) => employee._id === action.payload
+    //   );
 
-      if (updateEmployee) {
-        updateEmployee.role = "moderator";
-      }
-      [...otherEmployees, updateEmployee];
-    },
-    removeModeratorPrivilege: (state, action) => {
-      const otherEmployees = state.employees.filter(
-        (employee) => employee._id !== action.payload
-      );
-      const updateEmployee = state.employees.find(
-        (employee: { _id: string }) => employee._id === action.payload
-      );
-      if (updateEmployee) {
-        updateEmployee.role = "staff";
-      }
-      [...otherEmployees, updateEmployee];
-    },
+    //   if (updateEmployee) {
+    //     updateEmployee.role = "moderator";
+    //   }
+    //   [...otherEmployees, updateEmployee];
+    // },
+    // removeModeratorPrivilege: (state, action) => {
+    //   const otherEmployees = state.employees.filter(
+    //     (employee) => employee._id !== action.payload
+    //   );
+    //   const updateEmployee = state.employees.find(
+    //     (employee: { _id: string }) => employee._id === action.payload
+    //   );
+    //   if (updateEmployee) {
+    //     updateEmployee.role = "staff";
+    //   }
+    //   [...otherEmployees, updateEmployee];
+    // },
   },
 });
 
@@ -86,7 +94,9 @@ export const {
   getEmployeeSuccess,
   getEmployeeFailure,
   addEmployeeSuccess,
-  giveModeratorPrivilege,
-  removeModeratorPrivilege,
+  // giveModeratorPrivilege,
+  // removeModeratorPrivilege,
+  addEmployeeStart,
+  addEmployeeFailure
 } = employeeSlice.actions;
 export default employeeSlice.reducer;

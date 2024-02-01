@@ -11,7 +11,7 @@ import { closeSideBar, openSideBar } from "../../../redux/sideBar";
 import { twMerge } from "tailwind-merge";
 
 const Header = () => {
-  const { isSideBarOpen } = useSelector((state) => state.sideBarOpener);
+  const { isSideBarOpen } = useSelector((state: {sideBarOpener: {isSideBarOpen: boolean}}) => state.sideBarOpener);
   const dispatch = useDispatch();
 
   console.log(isSideBarOpen);
@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   return (
-    <div className="flex justify-center items-center w-screen shadow fixed top-0 left-0 bg-white z-50">
+    <div className="flex justify-center items-center w-screen shadow fixed top-0 left-0 bg-white bg-opacity-20 bg-blur-20 z-50">
       <div className="wrapper flex justify-between items-center w-full py-4 px-4">
         <FaBars
           onClick={handleSideBar}
