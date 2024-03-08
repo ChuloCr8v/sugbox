@@ -24,6 +24,6 @@ router.delete("/:id", verifyToken, deleteSuggestion);
 router.put("/upvote/:id", verifyEmployeeToken, upVoteSuggestion);
 router.put("/downvote/:id", verifyEmployeeToken, downVoteSuggestion);
 router.get("/get-suggestion/:id", getSuggestion);
-router.get("/all", getAllSuggestions);
+router.get("/all/:id", getAllSuggestions);
 
 export default router;

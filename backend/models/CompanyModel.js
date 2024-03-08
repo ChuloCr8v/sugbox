@@ -30,6 +30,12 @@ const CompanySchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    approvedSuggestions: {
+      type: [],
+    },
+    rejectedSuggestions: {
+      type: [],
+    },
   },
   { timestamps: true }
 );

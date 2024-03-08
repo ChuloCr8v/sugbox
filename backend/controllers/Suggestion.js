@@ -7,9 +7,19 @@ export const newSuggestion = async (req, res, next) => {
   const userId = req.employeeId || req.user;
   try {
     const user = await EmployeeModel.findById(req.employeeId);
+    const {
+      company,
+      suggestions,
+      upvotes,
+      downVotes,
+      comments,
+      replies,
+      ...others
+    } = user._doc;
+
     const newSuggestion = new SuggestionModel({
       userId: userId,
-      user: user,
+      user: others,
       companyId: companyId,
       ...req.body,
     });
@@ -57,7 +67,6 @@ export const editSuggestion = async (req, res, next) => {
         new Date(suggestion.createdAt).getTime() - new Date().getTime()
       ) /
       (1000 * 60 * 60);
-    console.log(timeElasped);
 
     if (timeElasped > 24)
       return res
@@ -83,7 +92,6 @@ export const editSuggestion = async (req, res, next) => {
 //Approve Suggestion
 
 export const approveSuggestion = async (req, res, next) => {
-  console.log(req.user);
   try {
     const suggestion = await SuggestionModel.findById(req.params.id);
     if (suggestion.companyId !== req.user)
@@ -109,7 +117,6 @@ export const approveSuggestion = async (req, res, next) => {
 //Reject Suggestion
 
 export const rejectSuggestion = async (req, res, next) => {
-  console.log(req.user);
   try {
     const suggestion = await SuggestionModel.findById(req.params.id);
     if (suggestion.companyId !== req.user)
@@ -184,8 +191,13 @@ export const upVoteSuggestion = async (req, res, next) => {
 
     if (suggestion.userId === req.employeeId)
       return res.status(403).json("You cant vote your suggestion");
-    if (suggestion.upVotes.includes(req.employeeId))
-      return res.status(403).json("You have already upvoted");
+    if (suggestion.upVotes.includes(req.employeeId)) {
+      await SuggestionModel.findByIdAndUpdate(req.params.id, {
+        $pull: { upVotes: req.employeeId },
+      });
+      return;
+    }
+    // return res.status(403).json("You have already upvoted");
     if (suggestion.downVotes.includes(req.employeeId)) {
       await SuggestionModel.findByIdAndUpdate(req.params.id, {
         $pull: {
@@ -213,7 +225,13 @@ export const downVoteSuggestion = async (req, res, next) => {
     if (suggestion.userId === req.employeeId)
       return res.status(403).json("You cant vote your suggestion");
     if (suggestion.downVotes.includes(req.employeeId))
-      return res.status(403).json("You have already downvoted");
+      if (suggestion.downVotes.includes(req.employeeId)) {
+        // return res.status(403).json("You have already downvoted");
+        await SuggestionModel.findByIdAndUpdate(req.params.id, {
+          $pull: { downVotes: req.employeeId },
+        });
+        return;
+      }
     if (suggestion.upVotes.includes(req.employeeId)) {
       await SuggestionModel.findByIdAndUpdate(req.params.id, {
         $pull: {

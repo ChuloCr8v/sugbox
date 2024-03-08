@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.ant-select {
+  width: 100% !important;
+}
+
+:where(.css-dev-only-do-not-override-nnuwmp).ant-select-single:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  height: 40px !important;
+}
+
+:where(.css-dev-only-do-not-override-nnuwmp).ant-select-single
+  .ant-select-selector
+  .ant-select-selection-item {
+  display: flex;
+  align-items: center;
+}
+
+:where(.css-dev-only-do-not-override-nnuwmp).ant-table-wrapper {
+  width: 100%;
+}
+
+.login,
+.signup {
+  background-image: url("/bgg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Glassmorphism card effect */
+.bg-morph {
+  backdrop-filter: blur(4px) saturate(200%);
+  -webkit-backdrop-filter: blur(4px) saturate(200%);
+  background-color: rgba(192, 192, 192, 0.41);
+  border-radius: 12px;
+  border: 1px solid rgba(209, 213, 219, 0.3);
+}
+
+/* @media (min-width: 768px) {
+  .ant-select {
+    width: 150px !important;
+  }
+} */
+
+.portal-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-header * {
+  position: relative;
+  z-index: 10;
+}
+
+.blur-bg {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-image: url("/portal-bg.jpg");
+  background-size: contain;
+
+  top: 0;
+  left: 0;
+  z-index: 0;
+  filter: blur(8px);
+  -webkit-filter: blur(3px);
+}
+
+tspan {
+  color: red;
+  font-size: 14px;
+}
+
+rect {
+  height: 15px;
+  width: 15px;
+  transform: translateY(3px) translateX(4px) !important;
+}
+
+.css-1u0lry5-MuiChartsLegend-root {
+  transform: translateX(-20px) !important;
+}
