@@ -6,11 +6,17 @@ import { NextRouter } from "next/router";
 import { AnyAction, Dispatch } from "redux";
 import { loginFailure, loginSuccess, startLogin } from "./redux/auth";
 import {
+  addCommentFailure,
+  addCommentStart,
+  addCommentSuccessful,
+  getCommentsSuccess,
+  upvoteComment,
+} from "./redux/comments";
+import {
   addEmployeeSuccess,
   deleteEmployeeFailure,
   deleteEmployeeStart,
   deleteEmployeeSuccess,
-  getEmployee,
   getEmployeeFailure,
   getEmployeeSuccess,
   getSingleEmployee,
@@ -26,7 +32,7 @@ import {
   startLoading,
   stopLoading,
 } from "./redux/modals";
-import suggestion, {
+import {
   addSingleUserSuggestion,
   addSuggestionSuccess,
   downVoteSingleSuggestion,
@@ -36,15 +42,6 @@ import suggestion, {
   getSuggestionsStart,
   upVoteSingleSuggestion,
 } from "./redux/suggestion";
-import {
-  addComment,
-  addCommentFailure,
-  addCommentStart,
-  addCommentSuccessful,
-  getCommentsSuccess,
-  upvoteComment,
-} from "./redux/comments";
-import { stopSuggestionsLoading, suggestionsLoading } from "./redux/loading";
 
 interface Props {
   signUpData: {};
@@ -153,88 +150,9 @@ export const signUp = async ({
   setTimeout(() => dispatch(hideAlert()), 3000);
 };
 
-export const signIn = async ({ dispatch, loginData, router }: Props) => {
-  dispatch(startLogin());
-
-  try {
-    const authDetails = await axios.put(
-      "http://localhost:8000/api/auth/company/login-company",
-
-      loginData
-    );
-    const auth = authDetails.data;
-    localStorage.setItem("auth", auth);
-
-    dispatch(loginSuccess(auth));
-
-    dispatch(
-      showAlert({
-        alertText: `Login Successfull`,
-        alertType: "success",
-      })
-    );
-
-    localStorage.setItem("auth", auth);
-
-    router.push("/dashboard");
-  } catch (error) {
-    console.log("error");
-    dispatch(
-      showAlert({
-        alertText: `Unable to login. Try again.`,
-        alertType: "error",
-      })
-    );
-  }
-  dispatch(loginFailure());
-  setTimeout(() => dispatch(hideAlert()), 3000);
-};
-
-export const employeeSignIn = async ({
-  dispatch,
-  loginData,
-  router,
-}: Props) => {
-  
-  dispatch(startLogin());
-
-  try {
-    const authDetails = await axios.put(
-      "http://localhost:8000/api/auth/employee/login-employee",
-      loginData
-    );
-
-    const auth = authDetails.data;
-
-    dispatch(loginSuccess(auth));
-
-    dispatch(
-      showAlert({
-        alertText: `Login Successfull`,
-        alertType: "success",
-      })
-    );
-
-    localStorage.setItem("auth", auth);
-    router.push("/dashboard");
-  } catch (error) {
-    dispatch(loginFailure())
-    console.log("error");
-    dispatch(
-      showAlert({
-        alertText: `Unable to login. Try again.`,
-        alertType: "error",
-      })
-    );
-  }
-  setTimeout(() => dispatch(hideAlert()), 3000);
-};
-
 export const employeeSignUp = async ({
   signUpData,
   dispatch,
-  router,
-  firstName,
   id,
   token,
 }: employeeSignupProps) => {
@@ -246,8 +164,6 @@ export const employeeSignUp = async ({
       {
         headers: {
           Authorization: `${token}`,
-          // You can add other headers if needed
-          // 'Custom-Header': 'value',
         },
       }
     );
@@ -255,7 +171,7 @@ export const employeeSignUp = async ({
     dispatch(addEmployeeSuccess(employees.data.employee));
     dispatch(
       showAlert({
-        alertText: `${firstName} registered successfully`,
+        alertText: `${signUpData.firstName} registered successfully`,
         alertType: "success",
       })
     );
@@ -265,7 +181,7 @@ export const employeeSignUp = async ({
     console.log(error);
     dispatch(
       showAlert({
-        alertText: `Unable to register ${firstName}! Please try again.`,
+        alertText: `Unable to register ${signUpData.firstName}! Please try again.`,
         alertType: "error",
       })
     );
@@ -300,51 +216,6 @@ export const getOneEmployee = async ({ dispatch, id }) => {
     dispatch(getEmployeeFailure());
     console.log(error);
   }
-};
-
-export const deleteEmployee = async ({
-  dispatch,
-  id,
-  token,
-  setShowConfirmModal,
-}: {
-  dispatch: (arg: any) => void;
-  id: void;
-  token: string;
-  setShowConfirmModal: (arg: boolean) => void;
-}) => {
-  dispatch(deleteEmployeeStart(id));
-  try {
-    await axios.delete(`http://localhost:8000/api/employee/${id}`, {
-      headers: {
-        Authorization: `${token}`,
-      },
-    });
-    dispatch(
-      showAlert({
-        alertText: `Employee Deleted Successfully!`,
-        alertType: "success",
-      })
-    );
-    dispatch(deleteEmployeeSuccess(id));
-    dispatch(
-      showAlert({
-        alertText: `Employee deleted successfully.`,
-        alertType: "success",
-      })
-    );
-    setShowConfirmModal(false);
-  } catch (error) {
-    dispatch(deleteEmployeeFailure());
-    dispatch(
-      showAlert({
-        alertText: `Unable to delete user!`,
-        alertType: "error",
-      })
-    );
-    console.log(error);
-  }
-  setTimeout(() => dispatch(hideAlert()), 3000);
 };
 
 export const makeModerator = async ({

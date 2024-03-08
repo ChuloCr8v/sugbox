@@ -55,6 +55,10 @@ const EmployeeSchema = new mongoose.Schema(
     rejectedSuggestions: {
       type: [],
     },
+    isDisabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

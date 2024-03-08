@@ -1,17 +1,16 @@
 import express from "express";
 import {
+  disableEmployee,
   editEmployee,
-  deleteEmployee,
-  getEmployees,
   getEmployee,
+  getEmployees,
 } from "../controllers/Employee.js";
-import { verifyEmployeeToken } from "../verifyEmployeeToken.js";
 import { verifyAdminToken } from "../verifyAdminToken.js";
 
 const router = express.Router();
 
 router.put("/edit-employee/:id", verifyAdminToken, editEmployee);
-router.delete("/:id", verifyAdminToken, deleteEmployee);
+router.put("/:id", verifyAdminToken, disableEmployee);
 router.get("/all", getEmployees);
 router.get("/:id", getEmployee);
 

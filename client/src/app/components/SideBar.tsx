@@ -15,9 +15,11 @@ import { FaArrowLeft } from "react-icons/fa";
 import { closeSideBar } from "../../../redux/sideBar";
 
 const Sidebar = () => {
-  const { isSideBarOpen } = useSelector((state: {sideBarOpener: {isSideBarOpen: boolean}}) => state.sideBarOpener);
+  const { isSideBarOpen } = useSelector(
+    (state: { sideBarOpener: { isSideBarOpen: boolean } }) =>
+      state.sideBarOpener
+  );
   const dispatch = useDispatch();
-  console.log(isSideBarOpen);
   const auth = authData({ useSelector });
   const path = usePathname();
 
@@ -53,7 +55,16 @@ const Sidebar = () => {
     // },
   ];
 
-  const MenuItem = ({ item }: {item: {title: string; link: string; icon: React.JSX.Element; role: string;}}) => {
+  const MenuItem = ({
+    item,
+  }: {
+    item: {
+      title: string;
+      link: string;
+      icon: React.JSX.Element;
+      role: string;
+    };
+  }) => {
     return (
       <Link
         href={item.link}

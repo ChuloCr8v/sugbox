@@ -5,16 +5,16 @@ import { loginFormValues } from "../data";
 import { ChangeEventHandler, useContext, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useSelector } from "react-redux";
+import Link from "next/link";
 
 interface Props {
   handleInputChange: ChangeEventHandler<HTMLInputElement>;
   disabled: boolean;
   handleSubmit: (arg0: {}) => void;
-  isLoading: boolean
+  isLoading: boolean;
 }
 
 const LoginForm = (props: Props) => {
-
   return (
     <form
       action=""
@@ -28,6 +28,7 @@ const LoginForm = (props: Props) => {
           placeholder={v.placeholder}
           name={v.name}
           key={index}
+          required={v.required}
         />
       ))}
 
@@ -44,13 +45,26 @@ const LoginForm = (props: Props) => {
       </div>
       <Button
         className={twMerge(
-          "w-full mt-6 hover:bg-[#031932] bg-hoverblue font-bold text-white uppercase py-3",
+          "w-full hover:bg-[#031932] bg-hoverblue font-bold text-white uppercase py-3",
           props.disabled && "bg-gray-200 hover:bg-gray-200"
         )}
         text={"Login"}
         onClick={props.handleSubmit}
         disabled={props.disabled}
-        loading={props.isLoading} url={""}      />
+        loading={props.isLoading}
+        url={""}
+      />
+      <div className="place-self-center">
+        <span className="text-center text-white">
+          Don't have an account? Sign up{" "}
+          <Link
+            href="/signup"
+            className="underline font-bold hover:text-[#031932] duration-200"
+          >
+            here
+          </Link>
+        </span>
+      </div>
     </form>
   );
 };

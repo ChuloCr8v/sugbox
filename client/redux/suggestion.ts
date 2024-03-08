@@ -47,18 +47,14 @@ export const suggestionSlice = createSlice({
       state.isLoading = true;
       state.error = false;
     },
-    editSingleSuggestion: (state, action) => {
-      const { title, suggestion, isAnonymous } = action.payload;
-      return {
-        ...state,
-        singleSuggestion: {
-          ...state.singleSuggestion,
-          title,
-          suggestion,
-          isAnonymous,
-        },
-      };
-    },
+    editSingleSuggestion: (state, action) => ({
+      ...state,
+      singleSuggestion: {
+        ...state.singleSuggestion,
+        ...action.payload,
+      },
+    }),
+
     deleteSuggestionSuccess: (state, action) => {
       state.isLoading = false;
       const id = action.payload;

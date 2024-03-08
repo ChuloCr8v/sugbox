@@ -2,13 +2,21 @@ import { Checkbox } from "antd";
 import { FormGroup } from "./SmallerComponents";
 import Button from "./Button";
 import { twMerge } from "tailwind-merge";
+import Link from "next/link";
+import { ChangeEventHandler } from "react";
 
 interface Props {
-  handleInputChange: any;
-  formValues: [];
-  handleSubmit: () => void;
+  handleInputChange: ChangeEventHandler<HTMLInputElement>;
+  formValues: {
+    label: string;
+    type: string;
+    placeholder: string;
+    name: string;
+    required: boolean;
+  }[];
+  handleSubmit: (e: { preventDefault: () => void }) => void;
   disabled: boolean;
-  isLoading: boolean
+  isLoading: boolean;
 }
 
 const SignupForm = (props: Props) => {
@@ -42,14 +50,26 @@ const SignupForm = (props: Props) => {
 
       <Button
         className={twMerge(
-          "w-full mt-5 bg-primaryblue hover:bg-hoverblue font-bold text-white uppercase py-3",
+          "w-full  bg-primaryblue hover:bg-hoverblue font-bold text-white uppercase py-3",
           props.disabled && "bg-gray-200 hover:bg-gray-200"
         )}
         text={"SignUp"}
         onClick={props.handleSubmit}
-        disabled={props.disabled} url={""} 
+        disabled={props.disabled}
+        url={""}
         loading={props.isLoading}
-        />
+      />
+      <div className="place-self-center">
+        <span className="text-center text-white">
+          Already have an account? Login{" "}
+          <Link
+            href="/login"
+            className="underline font-bold hover:text-[#031932] duration-200"
+          >
+            here
+          </Link>
+        </span>
+      </div>
     </form>
   );
 };

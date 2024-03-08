@@ -30,7 +30,7 @@
     .ant-select-customize-input
   )
   .ant-select-selector {
-  height: 45px !important;
+  height: 40px !important;
 }
 
 :where(.css-dev-only-do-not-override-nnuwmp).ant-select-single
@@ -60,8 +60,47 @@
   border: 1px solid rgba(209, 213, 219, 0.3);
 }
 
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
   .ant-select {
     width: 150px !important;
   }
+} */
+
+.portal-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-header * {
+  position: relative;
+  z-index: 10;
+}
+
+.blur-bg {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-image: url("/portal-bg.jpg");
+  background-size: contain;
+
+  top: 0;
+  left: 0;
+  z-index: 0;
+  filter: blur(8px);
+  -webkit-filter: blur(3px);
+}
+
+tspan {
+  color: red;
+  font-size: 14px;
+}
+
+rect {
+  height: 15px;
+  width: 15px;
+  transform: translateY(3px) translateX(4px) !important;
+}
+
+.css-1u0lry5-MuiChartsLegend-root {
+  transform: translateX(-20px) !important;
 }

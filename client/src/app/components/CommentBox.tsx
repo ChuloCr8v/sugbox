@@ -14,9 +14,9 @@ type Props = {
 };
 
 const CommentBox = (props: Props) => {
-  const { newCommentModal } = useSelector((state) => state.modals);
+  const { newCommentModal } = useSelector((state: any) => state.modals);
   const dispatch = useDispatch();
-  const { addCommentLoading } = useSelector((state) => state.comments);
+  const { addCommentLoading } = useSelector((state: any) => state.comments);
 
   console.log(addCommentLoading);
 

@@ -1,14 +1,6 @@
-import React, { useEffect } from "react";
-import { FaThumbsDown, FaThumbsUp } from "react-icons/fa";
-import { twMerge } from "tailwind-merge";
-import { VoteComponent } from "./SmallerComponents";
+import React from "react";
 import { dateFormatter } from "../utils";
-import {
-  authData,
-  getComment,
-  getToken,
-  upvoteSingleComment,
-} from "../../../api";
+import { authData, getToken } from "../../../api";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 
@@ -24,8 +16,8 @@ type Props = {
 const Comment = (props: Props) => {
   const isAdmin = props.data.user?.isAdmin;
   const user = authData({ useSelector });
-  const userId = user._id;
-  const id = props.data._id;
+  const userId = user?._id;
+  const id = props.data?._id;
   const token = getToken({ useSelector });
   const dispatch = useDispatch();
 
@@ -38,7 +30,7 @@ const Comment = (props: Props) => {
             : `${props.data.user?.firstName} ${props.data.user?.lastName}`}
         </p>
         <div className="flex flex-col items-start gap-3">
-          <p className="normal-case">{props.data.comment}</p>{" "}
+          <p className="normal-case">{props.data.comment}</p>
           <div className="flex gap-2 items-center font-bold text-gray-500">
             <p className="text-[12px]">{dateFormatter(props.data.createdAt)}</p>
             <p className="text-[12px]">
@@ -47,8 +39,8 @@ const Comment = (props: Props) => {
           </div>
         </div>
       </div>
-      {/* 
-      <VoteComponent
+
+      {/* <VoteComponent
         upVotesClick={() =>
           upvoteSingleComment({ id, token, userId, dispatch })
         }

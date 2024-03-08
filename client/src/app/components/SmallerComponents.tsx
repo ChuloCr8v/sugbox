@@ -1,6 +1,6 @@
 "use client";
 
-import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { FaThumbsUp, FaThumbsDown, FaAsterisk } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
 import { upVoteSuggestion, downVoteSuggestion } from "../../../api";
 import suggestion from "../../../redux/suggestion";
@@ -8,7 +8,19 @@ import { labelProps, inputProps, formGroupProps } from "../types";
 
 export const Label = (props: labelProps) => {
   return (
-    <label className="text-white text-base font-semibold">{props.title}</label>
+    <label
+      className={twMerge(
+        "text-white text-base font-semibold flex items-center gap-1",
+        props.labelClassName
+      )}
+    >
+      {props.title}{" "}
+      {props.isRequired && (
+        <span className="text-red-500">
+          <FaAsterisk className="text-[6px]" />
+        </span>
+      )}
+    </label>
   );
 };
 
@@ -43,7 +55,11 @@ export const TextArea = (props: inputProps) => {
 export const FormGroup = (props: formGroupProps) => {
   return (
     <div className="flex flex-col items-start gap-3 w-full">
-      <Label title={props.label} />
+      <Label
+        title={props.label}
+        isRequired={props.required}
+        labelClassName={props.labelClassName}
+      />
       {props.inputType === "textarea" ? (
         <TextArea
           onchange={props.onInputChange}

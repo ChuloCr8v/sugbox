@@ -1,49 +1,46 @@
-import React from "react";
-import Button from "./Button";
-import { useDispatch, useSelector } from "react-redux";
-import { showAccountModal } from "../../../redux/modals";
+"use client";
+
 import Link from "next/link";
-import HeaderProfile from "./HeaderProfile";
-import { authData } from "../../../api";
-import { logOut } from "../../../redux/auth";
+import { useRouter } from "next/navigation";
 import { FaBars } from "react-icons/fa";
-import { closeSideBar, openSideBar } from "../../../redux/sideBar";
+import { useDispatch, useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
+import { closeSideBar, openSideBar } from "../../../redux/sideBar";
+import UseGetAuth from "../hooks/useGetAuth";
+import HeaderProfile from "./HeaderProfile";
 
 const Header = () => {
-  const { isSideBarOpen } = useSelector((state: {sideBarOpener: {isSideBarOpen: boolean}}) => state.sideBarOpener);
+  const { isSideBarOpen } = useSelector(
+    (state: { sideBarOpener: { isSideBarOpen: boolean } }) =>
+      state.sideBarOpener
+  );
   const dispatch = useDispatch();
 
-  console.log(isSideBarOpen);
-
-  const auth = authData({ useSelector });
   const handleSideBar = () => {
     dispatch(isSideBarOpen ? closeSideBar() : openSideBar());
   };
+  const { auth } = UseGetAuth();
 
   return (
-    <div className="flex justify-center items-center w-screen shadow fixed top-0 left-0 bg-white bg-opacity-20 bg-blur-20 z-50">
+    <div
+      className={twMerge(
+        "flex justify-center items-center w-screen shadow fixed top-0 left-0 bg-white z-50",
+        !auth ? "bg-opacity-20" : " bg-opacity-100"
+      )}
+    >
       <div className="wrapper flex justify-between items-center w-full py-4 px-4">
         <FaBars
           onClick={handleSideBar}
           className={twMerge(
             "cursor-pointer hover:text-primaryblue duration-200 lg:hidden",
-            isSideBarOpen && "text-primaryblue"
+            isSideBarOpen && "text-primaryblue",
+            !auth && "hidden"
           )}
         />
         <Link href="/dashboard" className="logo_wrapper cursor-pointer">
           SUGbox
         </Link>
-        {auth ? (
-          <HeaderProfile />
-        ) : (
-          <Button
-            className="hover:text-primaryblue font-normal px-0"
-            text={"Sign In"}
-            onClick={() => dispatch(showAccountModal())}
-            disabled={false}
-          />
-        )}{" "}
+        {auth ? <HeaderProfile /> : <Link href={"/portal"}>Sign In</Link>}{" "}
       </div>
     </div>
   );

@@ -1,23 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import { Select } from "antd";
 import FilterCard from "./FilterCard";
-import { Dropdown, Button, MenuProps, Select } from "antd";
 
 interface Props {
-  data: [];
+  data: { status: string }[];
   setFilter: (arg0: string) => void;
   filter: string;
 }
 
 const FilterCards = (props: Props) => {
-  const pending = props.data.filter((d: { status: string }) =>
+  const pending = props.data.filter((d) =>
     d.status.toLowerCase().includes("pending")
   );
-  const approved = props.data.filter((d: { status: string }) =>
+  const approved = props.data.filter((d) =>
     d.status.toLowerCase().includes("approved")
   );
-  const rejected = props.data.filter((d: { status: string }) =>
+  const rejected = props.data.filter((d) =>
     d.status.toLowerCase().includes("rejected")
   );
   const filters = [

@@ -1,54 +1,48 @@
 "use client";
 
 import Image from "next/image";
-import { Dispatch, useState } from "react";
+import { useState } from "react";
 import Form from "../components/SignupForm";
-import { showAlert, startLoading, stopLoading } from "../../../redux/modals";
-import { useDispatch, useSelector } from "react-redux";
 import { signupFormValues } from "../data";
-import { useRouter } from "next/navigation";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
-import { signUp } from "../../../api/auth";
+import useSignup from "../hooks/useSignup";
 
 interface inputValueProps {
-  signUpData: {};
- 
-  router: AppRouterInstance;
-  companyName: string;
   companyEmail: string;
+  companyName: string;
   password: string;
   confirmPassword: string;
 }
 
+const inputValues = {
+  companyEmail: "",
+  companyName: "",
+  password: "",
+  confirmPassword: "",
+};
+
 const Signup = () => {
-  const [inputValue, setInputValue] = useState<inputValueProps>({});
-  const {isLoading} = useSelector((state: {employees: {isLoading: boolean}}) => state.employees)
+  const [signUpData, setSignUpData] = useState<inputValueProps>(inputValues);
 
+  const { signUp, isLoading } = useSignup();
 
-  const dispatch = useDispatch();
-
-  const handleInputChange = (e: { preventDefault: () => void; target: { name: string; value: string; }; }) => {
+  const handleInputChange = (e: {
+    preventDefault: () => void;
+    target: { name: string; value: string };
+  }) => {
     e.preventDefault();
-    setInputValue({ ...inputValue, [e.target.name]: e.target.value });
+    setSignUpData({ ...signUpData, [e.target.name]: e.target.value });
   };
 
-  const router = useRouter();
-
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    signUp({
-      signUpData: inputValue,
-      dispatch,
-      router,
-      companyName: inputValue.companyName,
-    });
+    signUp(signUpData);
   };
 
   const checkValues = () => {
-    return inputValue.companyEmail &&
-      inputValue.companyName &&
-      inputValue.password &&
-      inputValue.confirmPassword === inputValue.password
+    return signUpData.companyEmail &&
+      signUpData.companyName &&
+      signUpData.password &&
+      signUpData.confirmPassword === signUpData.password
       ? false
       : true;
   };
@@ -67,10 +61,13 @@ const Signup = () => {
           Welcome To Suggbox
         </h2>
         <p className="text-lg text-white mt-1">
-         Add Employees To Start Getting Suggestions
+          Register your organization to Start Getting Suggestions
         </p>
       </div>
-      <div className="flex items-center justify-center h-screen w-full overflow-y-scroll p-4 pt-48 pb-20 xl:pt-36">
+      <div className="flex flex-col items-center justify-center h-screen w-full overflow-y-scroll p-4 pt-48 pb-20 xl:pt-36">
+        <p className="text-2xl mb-4 text-center font-semibold text-white">
+          Register your Organization
+        </p>
         <Form
           handleInputChange={handleInputChange}
           formValues={signupFormValues}

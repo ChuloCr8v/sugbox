@@ -1,107 +1,139 @@
-import React, { useState } from "react";
 import { Modal, Select } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { FormGroup } from "./SmallerComponents";
-import Button from "./Button";
-import { newEmployeeFormItems } from "../data";
-import { authData, employeeSignUp, getToken } from "../../../api";
 import { useRouter } from "next/navigation";
-import { hideNewEmployeeModal, stopLoading } from "../../../redux/modals";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { authData, getToken } from "../../../api";
+import { hideNewEmployeeModal } from "../../../redux/modals";
+import { newEmployeeFormItems } from "../data";
+import Button from "./Button";
+import { FormGroup } from "./SmallerComponents";
+import useAddEmployee from "../hooks/useAddEmployee";
+import ModalFooter from "./modals/ModalFooter";
+
+type newEmployeeFormInput = {
+  firstName: string;
+  role: string;
+  lastName: string;
+  email: string;
+  password: string;
+  repeatPassword: string;
+};
+
+type newEmployeeModalState = {
+  modals: {
+    newEmployeeModal: boolean;
+  };
+};
+
+type employeesState = {
+  employees: {
+    employees: [];
+  };
+};
+
+export const newEmployeeInputValues = {
+  firstName: "",
+  role: "staff",
+  lastName: "",
+  email: "",
+  password: "",
+  repeatPassword: "",
+};
 
 const NewEmployeeModal = () => {
-  const [role, setRole] = useState("");
-  const { newEmployeeModal } = useSelector((state) => state.modals);
-  const { employees } = useSelector((state) => state.employees);
-  const { _id } = authData({ useSelector }) || {};
-  const [inputValue, setInputValue] = useState<{
-    firstName: string;
-    role: string;
-  }>({});
+  const { newEmployeeModal } = useSelector(
+    (state: newEmployeeModalState) => state.modals
+  );
+  const [inputValue, setInputValue] = useState<newEmployeeFormInput>(
+    newEmployeeInputValues
+  );
+
+  const { loading, employeeSignUp } = useAddEmployee();
 
   const dispatch = useDispatch();
-  const token = getToken({ useSelector });
 
-  // const handleClick = () => {
-  //   dispatch(stopLoading());
-  //   dispatch(hideNewEmployeeModal());
-  // };
-  const router = useRouter();
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: {
+    preventDefault: () => void;
+    target: { name: string; value: string };
+  }) => {
     e.preventDefault();
     setInputValue({ ...inputValue, [e.target.name]: e.target.value });
+    console.log(inputValue);
   };
 
-  const firstName = inputValue.firstName;
-
-  const handleEmployeeSignup = (e) => {
+  const handleEmployeeSignup = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     employeeSignUp({
       signUpData: inputValue,
-      dispatch,
-      id: _id,
-      firstName,
-      token,
-      router,
-      employees,
     });
   };
 
-  const handleChange = (value: string) => {
-    setRole(value);
-    setInputValue({ ...inputValue, ["role"]: value });
-    console.log(inputValue);
+  const onClose = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    dispatch(hideNewEmployeeModal());
+    setInputValue(newEmployeeInputValues);
+  };
+
+  const verifyInputFields = () => {
+    return Object.values(inputValue).some((value) => value === "");
+  };
+
+  const verifyPasswordsMatch =
+    inputValue.password === inputValue.repeatPassword;
+
+  const formValue = (name: string) => {
+    const inputKey = Object.keys(inputValue).filter((i) => i === name);
+    const correspondingValue = inputValue[inputKey[0]];
+    return correspondingValue;
   };
 
   return (
     <>
       <Modal
-        title={false}
+        title={"Add Employee"}
         open={newEmployeeModal}
-        onCancel={() => dispatch(hideNewEmployeeModal())}
-        footer={false}
+        onCancel={onClose}
+        footer={
+          <ModalFooter
+            handleOk={handleEmployeeSignup}
+            onClose={onClose}
+            loading={loading}
+            okText={"Submit"}
+            disabled={verifyInputFields() || loading || !verifyPasswordsMatch}
+          />
+        }
         className=""
       >
-        <div className="">
-          <p className="text-center font-semibold text-xl text-primaryblue mt-4">
-            Add Employee
-          </p>
-          <form action="" className="grid gap-6 py-6">
-            {newEmployeeFormItems.map((item, index) => (
-              <FormGroup
-                onInputChange={handleInputChange}
-                label={item.label}
-                inputType={item.type}
-                placeholder={item.placeholder}
-                name={item.name}
-                key={index}
-              />
-            ))}
-            <div className="flex flex-col items-start gap-3 -mt-2">
-              <label className="text-textcolor text-sm font-semibold">
-                Role
-              </label>
-              <Select
-                defaultValue="staff"
-                onChange={handleChange}
-                size="large"
-                className="w-full"
-                options={[
-                  { value: "staff", label: "Staff" },
-                  { value: "Moderator", label: "Moderator" },
-                ]}
-              />
-            </div>
-            <Button
-              text={"Submit"}
-              className={
-                "text-center bg-primaryblue text-white uppercase w-full mt-4 hover:bg-hoverblue h-12"
-              }
-              disabled={false}
-              onClick={handleEmployeeSignup}
+        <form action="" className="flex flex-col items-start gap-6 pt-6">
+          {newEmployeeFormItems.map((item, index) => (
+            <FormGroup
+              onInputChange={handleInputChange}
+              required={item.required}
+              label={item.label}
+              inputType={item.type}
+              placeholder={item.placeholder}
+              name={item.name}
+              value={formValue(item.name)}
+              key={index}
+              labelClassName="text-textcolor text-sm"
             />
-          </form>
-        </div>
+          ))}
+          <div className="flex flex-col items-start gap-3 w-full">
+            <label className="text-textcolor text-sm font-semibold">Role</label>
+            <Select
+              defaultValue="staff"
+              onChange={(value) => {
+                setInputValue((prev) => ({ ...prev, role: value }));
+                console.log(inputValue);
+              }}
+              className="w-full"
+              options={[
+                { value: "staff", label: "Staff" },
+                { value: "moderator", label: "Moderator" },
+              ]}
+            />
+          </div>
+        </form>
       </Modal>
     </>
   );

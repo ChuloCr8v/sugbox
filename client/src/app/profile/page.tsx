@@ -1,19 +1,19 @@
 "use client";
 
-import React, { ReactNode, useEffect, useState } from "react";
-import PageHeader from "../components/PageHeader";
-import { authData, getOneEmployee } from "../../../api";
-import { useDispatch, useSelector } from "react-redux";
 import { Select, Table } from "antd";
-import { getUserSuggestions } from "../api/suggestions";
 import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
-import { icon, statusColor } from "../suggestion/page";
-import { twMerge } from "tailwind-merge";
-import Button from "../components/Button";
-import { logOut } from "../../../redux/auth";
 import { useRouter } from "next/navigation";
+import { ReactNode, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { twMerge } from "tailwind-merge";
+import { authData, getOneEmployee } from "../../../api";
+import { logOut } from "../../../redux/auth";
+import { getUserSuggestions } from "../api/suggestions";
+import Button from "../components/Button";
+import PageHeader from "../components/PageHeader";
 import SuggestionCards from "../components/SuggestionCards";
+import { statusColor } from "../hooks/useStatusColor";
 
 interface DataType {
   comments: [];

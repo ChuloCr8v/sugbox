@@ -10,6 +10,7 @@ import {
 } from "../../../../redux/modals";
 import { authData, getToken } from "../../../../api";
 import { editSuggestion } from "@/app/api/suggestions";
+import useGetSuggestion from "@/app/hooks/useGetSuggestion";
 
 const EditSuggestionModal = (props) => {
   const [title, setTitle] = useState("");
@@ -21,6 +22,8 @@ const EditSuggestionModal = (props) => {
   const token = getToken({ useSelector });
   const user = authData({ useSelector });
   const id = editSuggestionModal._id;
+
+  const { getSuggestion } = useGetSuggestion();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -49,6 +52,7 @@ const EditSuggestionModal = (props) => {
       isAnonymous: anonymous,
       id,
     });
+    getSuggestion(id);
   };
 
   useEffect(() => {

@@ -1,29 +1,21 @@
 "use client";
 
-import React, { ReactNode, useEffect, useState } from "react";
-import PageHeader from "../components/PageHeader";
-import Table from "../components/Table";
-import {
-  authData,
-  deleteEmployee,
-  getEmployees,
-  getToken,
-  makeModerator,
-  removeModerator,
-} from "../../../api";
-import { useSelector, useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
-import Button from "../components/Button";
-import { twMerge } from "tailwind-merge";
-import { ColumnsType } from "antd/es/table";
-import { Dropdown, MenuProps, Modal, Tag } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
   EllipsisOutlined,
-  UserSwitchOutlined,
 } from "@ant-design/icons";
+import { Dropdown, MenuProps, Modal } from "antd";
+import { ColumnsType } from "antd/es/table";
 import Link from "next/link";
+import { ReactNode, useState } from "react";
+import { FaSpinner } from "react-icons/fa";
+import { twMerge } from "tailwind-merge";
+import Button from "../components/Button";
+import PageHeader from "../components/PageHeader";
+import Table from "../components/Table";
+import DisableEmployeeModal from "../components/modals/DisableEmployeeModal";
+import useGetEmployees from "../hooks/useGetEmployees";
 
 interface DataType {
   email: string;
@@ -38,35 +30,11 @@ interface DataType {
   suggestions: { length: number };
 }
 
-interface ConfirmModalProps {
-  children: ReactNode;
-  open: boolean | object;
-  onCancel: (arg0: boolean) => {};
-  title: string;
-  onClick: () => void;
-}
-
 const Employee = () => {
-  const [showConfirmModal, setShowConfirmModal] = useState({});
-  const { isLoading } = useSelector((state) => state.modals);
+  const [employeeData, setEmployeeData] = useState({});
+  const { isLoading, employees } = useGetEmployees();
 
-  const dispatch = useDispatch();
-  const userData = authData({ useSelector });
-  const { employees } = useSelector(
-    (state: { employees: { employees: [] } }) => state.employees
-  );
-  const token = getToken({ useSelector });
-  const auth = authData({ useSelector });
-  const router = useRouter();
-  const id = userData?.companyId ? userData?.companyId : userData?._id;
-
-  if (!auth) {
-    return router.push("/login");
-  }
-
-  useEffect(() => {
-    getEmployees({ dispatch, id });
-  }, []);
+  console.log(employees);
 
   const DropDown = ({
     data,
@@ -76,7 +44,7 @@ const Employee = () => {
       lastName: string;
       _id: string;
       isAdmin: boolean;
-      role: string
+      role: string;
     };
   }) => {
     const items: MenuProps["items"] = [
@@ -84,48 +52,55 @@ const Employee = () => {
         key: "1",
         label: (
           <div className="flex flex-col items-start ">
-            {/* <Button
-              className={twMerge("h-fit px-0 py-0 p-0 w-fit")}
-              text={
-                <div className="px-4 py-2 w-full flex items-center gap-4 hover:bg-blue-50">
-                  <UserSwitchOutlined />
-                  <span className="">
-                    {data?.role?.toLowerCase() === "moderator"
-                      ? "remove moderator"
-                      : "Make Moderator"}
-                  </span>
-                </div>
-              }
-              disabled={false}
-              onClick={() => handleMakeModerator(data)}
-            /> */}
-
             <Button
               className={twMerge("w-full h-fit p-0")}
               text={
-                <div className="py-2 w-full flex items-center gap-4 hover:bg-blue-50 font-normal">
+                <div className="py-2 w-full flex items-center gap-4 font-normal">
                   <DeleteOutlined />
-                  <span className="">Delete Employee</span>
+                  <span className="">Disable Employee</span>
                 </div>
               }
               disabled={false}
-              onClick={() => handleDeleteModal(data)}
-            />
-
-            <Button
-              className={twMerge("w-full h-fit p-0")}
-              text={
-                <div className="py-2 w-full flex items-center gap-4 hover:bg-blue-50 font-normal">
-                  <EditOutlined />
-                  <span className="">Edit Employee</span>
-                </div>
-              }
-              disabled={false}
-              onClick={() => handleDeleteModal(data)}
+              onClick={() => setEmployeeData(data)}
             />
           </div>
         ),
       },
+      {
+        key: "3",
+        label: (
+          <Button
+            className={twMerge("w-full h-fit p-0")}
+            text={
+              <div className="py-2 w-full flex items-center gap-4 font-normal">
+                <EditOutlined />
+                <span className="">Edit Employee</span>
+              </div>
+            }
+            disabled={false}
+          />
+        ),
+      },
+      // {
+      //   key: "4",
+      //   label: (
+      //     <Button
+      //       className={twMerge("h-fit px-0 py-0 p-0 w-fit")}
+      //       text={
+      //         <div className="px-4 py-2 w-full flex items-center gap-4 hover:bg-blue-50">
+      //           <UserSwitchOutlined />
+      //           <span className="">
+      //             {data?.role?.toLowerCase() === "moderator"
+      //               ? "remove moderator"
+      //               : "Make Moderator"}
+      //           </span>
+      //         </div>
+      //       }
+      //       disabled={false}
+      //       onClick={() => handleMakeModerator(data)}
+      //     />
+      //   ),
+      // },
     ];
 
     return (
@@ -191,117 +166,13 @@ const Employee = () => {
     },
   ];
 
-  // const handleMakeModerator = (record) => {
-  //   setShowConfirmModal({
-  //     record,
-  //     dispatch,
-  //     children: (
-  //       <p className="">
-  //         {record.role.toLowerCase() === "moderator" ? "Remove" : "Assign"}{" "}
-  //         moderator privilegdes{" "}
-  //         {record.role.toLowerCase() === "moderator" ? "from" : "to"}
-  //         <span className="text-fortrexorange font-bold mx-1">
-  //           {record.firstName + " " + record.lastName}?
-  //         </span>
-  //       </p>
-  //     ),
-  //     onClick: () => {
-  //       if (record.role === "moderator") {
-  //         removeModerator({
-  //           id: record._id,
-  //           dispatch,
-  //           token,
-  //           setShowConfirmModal,
-  //         });
-  //       } else {
-  //         makeModerator({
-  //           id: record._id,
-  //           dispatch,
-  //           token,
-  //           setShowConfirmModal,
-  //         });
-  //       }
-  //     },
-  //     title: record.isAdmin ? "Remove Admin" : "Make Admin",
-  //     onCancel: () => setShowConfirmModal(false),
-  //   });
-  // };
-
-  const handleDeleteModal = (record: {
-    firstName: string;
-    lastName: string;
-    _id: string;
-  }) => {
-    setShowConfirmModal({
-      record,
-      dispatch,
-      children: (
-        <p className="">
-          Delete
-          <span className="text-fortrexorange font-bold mx-1">
-            {record.firstName + " " + record.lastName}
-          </span>
-          from your employees?
-        </p>
-      ),
-      onClick: () =>
-        deleteEmployee({
-          id: record._id,
-          dispatch,
-          token,
-          setShowConfirmModal,
-        }),
-      title: "Delete Employee",
-      onCancel: () => setShowConfirmModal(false),
-    });
-  };
-
-  const ConfirmModal = ({
-    children,
-    open,
-    onCancel,
-    title,
-    onClick,
-  }: ConfirmModalProps) => {
-    const footer = (
-      <div className="mt-6 flex items-center gap-2 justify-end">
-        <Button
-          type="secondary"
-          text={"Cancel"}
-          disabled={false}
-          onClick={() => setShowConfirmModal(false)}
-        />
-        <Button
-          type="primary"
-          text={title?.toLowerCase().includes("admin") ? "Confirm" : "Delete"}
-          disabled={false}
-          onClick={onClick}
-        />
-      </div>
-    );
-
-    return (
-      <Modal
-        title={title}
-        open={open}
-        onCancel={onCancel}
-        footer={footer}
-        className={twMerge("")}
-      >
-        {children}
-      </Modal>
-    );
-  };
-
   const EditEmployeeModal = (data) => {
-
-    const [modalOpen, setModalOpen] = useState(true)
+    const [modalOpen, setModalOpen] = useState(true);
 
     return (
       <Modal
         title="Basic Modal"
-        open={true}
-
+        open={false}
         onCancel={() => setModalOpen(false)}
       >
         <p className="">Editing {data.firstName + " " + data.lastName}</p>
@@ -340,7 +211,7 @@ const Employee = () => {
               className={twMerge(
                 "role rounded-full text-sm font-semibold text-primaryred capitalize",
                 data.data.role.toLowerCase() === "moderator" &&
-                "text-primaryblue "
+                  "text-primaryblue "
               )}
             >
               {data.data.role === "false" ? "Staff" : data.data.role}
@@ -355,41 +226,36 @@ const Employee = () => {
     );
   };
 
-  console.log(employees);
-
   return (
     <div className="w-full p-4 pt-24">
       <PageHeader title={"Employees"} />
       <div className="mt-6">
-        {isLoading ? (
-          "Loading"
-        ) : (
-          <div className="w-full">
-            <div className="hidden lg:flex w-full">
-              {" "}
-              <Table data={employees} columns={columns} />
-            </div>
-            <div className=" w-full md:grid grid-cols-2 gap-4">
-              {employees.map((e, k) => (
-                <>
-                  <EditEmployeeModal data={e.data} />
-                  <EmployeeCard data={e} />
-                </>
-              ))}
-            </div>
+        {/* {isLoading ? (
+          <div className="h-screen w-full flex items-center justify-center gap-2 -mt-32">
+            <FaSpinner className="animate-spin text-2xl" />
+            <p className="">wait small...</p>
           </div>
-        )}
-
-        {showConfirmModal && (
-          <ConfirmModal
-            children={showConfirmModal.children}
-            open={showConfirmModal.children}
-            onCancel={() => setShowConfirmModal(false)}
-            title={showConfirmModal.title}
-            onClick={showConfirmModal.onClick}
-          />
-        )}
+        ) : ( */}
+        <div className="w-full ">
+          <div className="hidden lg:flex w-full">
+            <Table data={employees} columns={columns} loading={isLoading} />
+          </div>
+          <div className=" w-full md:grid grid-cols-2 lg:hidden gap-4">
+            {employees.map((e, k) => (
+              <>
+                <EditEmployeeModal data={e.data} />
+                <EmployeeCard data={e} />
+              </>
+            ))}
+          </div>
+        </div>
+        {/* )} */}
       </div>
+      <DisableEmployeeModal
+        employeeData={employeeData}
+        setEmployeeData={setEmployeeData}
+        isOpen={Object.values(employeeData).length > 0}
+      />
     </div>
   );
 };

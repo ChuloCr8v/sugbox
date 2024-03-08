@@ -1,10 +1,6 @@
-import { CloseCircleOutlined, EllipsisOutlined } from "@ant-design/icons";
-import React from "react";
-import { twJoin, twMerge } from "tailwind-merge";
-import { FaCheck, FaThumbsDown, FaThumbsUp, FaTrash } from "react-icons/fa";
-import { Dropdown, MenuProps } from "antd";
-import Button from "./Button";
 import Link from "next/link";
+import { FaThumbsDown, FaThumbsUp } from "react-icons/fa";
+import { twMerge } from "tailwind-merge";
 import { suggestionProps } from "../types";
 
 interface Props {
@@ -45,7 +41,10 @@ const SuggestionCard = (props: Props) => {
         <p className="mt-2 text-sm text-primaryblue">
           {props.data.comments.length}{" "}
           <span className="capitalize text-textcolor text-[14px]">
-            comments
+            comment
+            {props.data.comments.length > 1 && (
+              <span className="lowercase">s</span>
+            )}
           </span>
         </p>
       </div>

@@ -37,26 +37,16 @@ export const employeeSlice = createSlice({
       state.isLoading = false;
       state.error = false;
     },
-    getEmployeeFailure: (state) => {
-      state.error = true;
-      state.isLoading = false;
-    },
-    deleteEmployeeStart: (state) => {
-      state.isLoading = true;
-      state.error = false;
-    },
-    deleteEmployeeSuccess: (state, action) => {
+
+    disableEmployee: (state, action) => {
       state.isLoading = false;
       const userId = action.payload;
-      const deleted = state.employees.filter(
+      const disbaled = state.employees.filter(
         (user: { _id: string }) => user._id !== userId
       );
-      state.employees = deleted;
+      state.employees = disbaled;
     },
-    deleteEmployeeFailure: (state) => {
-      state.isLoading = false;
-      state.error = true;
-    },
+
     // giveModeratorPrivilege: (state, action) => {
     //   const otherEmployees = state.employees.filter(
     //     (employee) => employee._id !== action.payload
@@ -86,17 +76,12 @@ export const employeeSlice = createSlice({
 });
 
 export const {
-  deleteEmployeeStart,
-  deleteEmployeeSuccess,
-  deleteEmployeeFailure,
+  disableEmployee,
   getEmployee,
   getSingleEmployee,
   getEmployeeSuccess,
-  getEmployeeFailure,
   addEmployeeSuccess,
-  // giveModeratorPrivilege,
-  // removeModeratorPrivilege,
   addEmployeeStart,
-  addEmployeeFailure
+  addEmployeeFailure,
 } = employeeSlice.actions;
 export default employeeSlice.reducer;

@@ -1,8 +1,10 @@
-import { ChangeEventHandler, Dispatch, ReactNode } from "react";
-import { AnyAction } from "react-redux";
+import { AnyAction } from "@reduxjs/toolkit";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { ChangeEventHandler, Dispatch, ReactNode } from "react";
 
 export interface labelProps {
+  labelClassName?: string;
+  isRequired?: boolean;
   title: string;
 }
 export interface inputProps {
@@ -15,6 +17,7 @@ export interface inputProps {
 }
 
 export interface formGroupProps {
+  labelClassName?: string;
   onInputChange: ChangeEventHandler<HTMLInputElement>;
   label: string;
   inputType?: string;
@@ -37,10 +40,9 @@ export interface ModalComponentProps {
 
 export interface employeeSignupProps {
   id: string;
-  signUpData: {};
+  signUpData: { firstName: string };
   dispatch: Dispatch<AnyAction>;
   router: AppRouterInstance;
-  firstName: string;
   token: string;
   employees: [];
 }

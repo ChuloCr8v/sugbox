@@ -22,7 +22,12 @@ const Comments = (props: Props) => {
   return (
     <div className="bg-white shadow rounded-md">
       <div className="border-b-[1.5px] pb-2 flex items-center justify-between p-4">
-        <p className="font-bold capitalize text-lg">Comments</p>
+        <p className="font-bold text-gray-600 text-lg flex items-center gap-2 uppercase">
+          Comments{" "}
+          <span className="bg-primaryblue rounded-full text-[12px] text-white h-6 w-6 flex items-center justify-center">
+            {comments.length}
+          </span>
+        </p>
         <Button
           onClick={() => dispatch(showNewCommentModal())}
           className={

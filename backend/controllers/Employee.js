@@ -22,17 +22,19 @@ export const editEmployee = async (req, res, next) => {
   }
 };
 
-export const deleteEmployee = async (req, res, next) => {
+export const disableEmployee = async (req, res, next) => {
   try {
     const employee = await EmployeeModel.findOne({ _id: req.params.id });
     if (!employee) return res.status(401).json("Employee does not exist.");
     if (employee.companyId.toString(16) !== req.user)
-      return res.status(401).json("You can only delete your employee.");
-    await EmployeeModel.findByIdAndDelete(req.params.id);
-    const test = await CompanyModel.findByIdAndUpdate(req.user, {
-      $pull: { employees: { _id: employee._id } },
+      return res.status(401).json("You can only disable your employee.");
+    await EmployeeModel.findByIdAndUpdate(req.params.id, {
+      $set: req.body,
     });
-    res.status(200).json("Employee deleted successfully");
+    const test = await CompanyModel.findByIdAndUpdate(req.user, {
+      $push: { employees: { _id: employee._id } },
+    });
+    res.status(200).json("Employee disabled successfully");
   } catch (error) {
     next(error);
   }
